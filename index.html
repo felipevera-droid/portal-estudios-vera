@@ -13,16 +13,20 @@
         <p class="eyebrow">Portal familiar</p>
         <h1>Portal de Estudios Vera</h1>
         <p class="subtitle">Elige tu perfil, entra a una materia y practica con quizzes interactivos.</p>
+        <div class="home-tools">
+          <button id="themeToggle" class="ghost-btn">Cambiar tema</button>
+          <button id="soundToggle" class="ghost-btn">Sonido: ON</button>
+        </div>
       </div>
 
       <div class="profile-grid">
         <button class="profile-card" data-student="santiago">
-          <span class="avatar">S</span>
+          <span class="avatar avatar-santiago">🚀</span>
           <span class="profile-name">Santiago</span>
           <small>10 años</small>
         </button>
         <button class="profile-card" data-student="benjamin">
-          <span class="avatar">B</span>
+          <span class="avatar avatar-benjamin">🦊</span>
           <span class="profile-name">Benjamín</span>
           <small>9 años</small>
         </button>
@@ -36,25 +40,35 @@
     <section id="dashboard" class="screen">
       <nav class="topbar">
         <button id="backHome" class="ghost-btn">← Cambiar perfil</button>
-        <div>
-          <p class="eyebrow">Estudiando con</p>
-          <h2 id="studentName">Alumno</h2>
+        <div class="student-header">
+          <span id="studentAvatar" class="small-avatar">⭐</span>
+          <div>
+            <p class="eyebrow">Estudiando con</p>
+            <h2 id="studentName">Alumno</h2>
+          </div>
         </div>
       </nav>
 
       <div class="stats-row">
-        <div class="stat-card">
-          <span id="completedCount">0</span>
-          <small>quizzes completados</small>
-        </div>
-        <div class="stat-card">
-          <span id="starsCount">0</span>
-          <small>estrellas ganadas</small>
-        </div>
-        <div class="stat-card">
-          <span id="bestScore">0%</span>
-          <small>mejor resultado</small>
-        </div>
+        <div class="stat-card"><span id="completedCount">0</span><small>quizzes completados</small></div>
+        <div class="stat-card"><span id="starsCount">0</span><small>estrellas ganadas</small></div>
+        <div class="stat-card"><span id="bestScore">0%</span><small>mejor resultado</small></div>
+        <div class="stat-card"><span id="streakCount">0</span><small>racha de estudio</small></div>
+      </div>
+
+      <div class="addon-grid">
+        <section class="addon-card">
+          <h3>🏆 Ranking familiar</h3>
+          <div id="rankingList" class="ranking-list"></div>
+        </section>
+        <section class="addon-card">
+          <h3>🎖️ Premios</h3>
+          <div id="badgesList" class="badge-list"></div>
+        </section>
+        <section class="addon-card">
+          <h3>📅 Plan de estudio</h3>
+          <ul id="studyPlan" class="study-plan"></ul>
+        </section>
       </div>
 
       <h3>Materias</h3>
@@ -82,9 +96,7 @@
       </nav>
 
       <div class="quiz-panel">
-        <div class="progress-wrap">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
+        <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
         <p id="questionCounter" class="counter"></p>
         <h3 id="questionText" class="question"></h3>
         <div id="options" class="options"></div>
@@ -102,6 +114,7 @@
         <h2 id="resultTitle">Buen trabajo</h2>
         <div id="scoreCircle" class="score-circle">0%</div>
         <p id="resultMessage"></p>
+        <div id="earnedBadges" class="earned-badges"></div>
         <div id="reviewList" class="review-list"></div>
         <button id="finishQuiz" class="primary-btn">Guardar y volver</button>
       </div>
