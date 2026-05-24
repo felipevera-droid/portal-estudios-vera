@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal de Estudios Vera</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section id="home" class="screen active">
+      <div class="hero">
+        <p class="eyebrow">Portal familiar</p>
+        <h1>Portal de Estudios Vera</h1>
+        <p class="subtitle">Elige tu perfil, entra a una materia y practica con quizzes interactivos.</p>
+      </div>
+
+      <div class="profile-grid">
+        <button class="profile-card" data-student="santiago">
+          <span class="avatar">S</span>
+          <span class="profile-name">Santiago</span>
+          <small>10 años</small>
+        </button>
+        <button class="profile-card" data-student="benjamin">
+          <span class="avatar">B</span>
+          <span class="profile-name">Benjamín</span>
+          <small>9 años</small>
+        </button>
+      </div>
+
+      <div class="parent-note">
+        <strong>Para Felipe:</strong> esta versión guarda el progreso en el navegador del computador o tablet. No usa claves ni datos personales externos.
+      </div>
+    </section>
+
+    <section id="dashboard" class="screen">
+      <nav class="topbar">
+        <button id="backHome" class="ghost-btn">← Cambiar perfil</button>
+        <div>
+          <p class="eyebrow">Estudiando con</p>
+          <h2 id="studentName">Alumno</h2>
+        </div>
+      </nav>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span id="completedCount">0</span>
+          <small>quizzes completados</small>
+        </div>
+        <div class="stat-card">
+          <span id="starsCount">0</span>
+          <small>estrellas ganadas</small>
+        </div>
+        <div class="stat-card">
+          <span id="bestScore">0%</span>
+          <small>mejor resultado</small>
+        </div>
+      </div>
+
+      <h3>Materias</h3>
+      <div id="subjectGrid" class="subject-grid"></div>
+    </section>
+
+    <section id="quizList" class="screen">
+      <nav class="topbar">
+        <button id="backDashboard" class="ghost-btn">← Volver</button>
+        <div>
+          <p class="eyebrow" id="quizStudentLabel">Alumno</p>
+          <h2 id="subjectTitle">Materia</h2>
+        </div>
+      </nav>
+      <div id="quizCards" class="quiz-grid"></div>
+    </section>
+
+    <section id="quizScreen" class="screen">
+      <nav class="topbar">
+        <button id="exitQuiz" class="ghost-btn">← Salir</button>
+        <div>
+          <p class="eyebrow" id="quizMeta">Quiz</p>
+          <h2 id="quizTitle">Título</h2>
+        </div>
+      </nav>
+
+      <div class="quiz-panel">
+        <div class="progress-wrap">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+        <p id="questionCounter" class="counter"></p>
+        <h3 id="questionText" class="question"></h3>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback hidden"></div>
+        <div class="quiz-actions">
+          <button id="hintBtn" class="secondary-btn">Ver pista</button>
+          <button id="nextBtn" class="primary-btn" disabled>Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen">
+      <div class="result-card">
+        <p class="eyebrow">Resultado</p>
+        <h2 id="resultTitle">Buen trabajo</h2>
+        <div id="scoreCircle" class="score-circle">0%</div>
+        <p id="resultMessage"></p>
+        <div id="reviewList" class="review-list"></div>
+        <button id="finishQuiz" class="primary-btn">Guardar y volver</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
