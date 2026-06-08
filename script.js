@@ -489,7 +489,7 @@ async function generateQuizFromPdf(apiKey, file, grade, numQ, tipo) {
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({
-      model:'claude-sonnet-4-6', max_tokens:3000,
+      model:'claude-sonnet-4-6', max_tokens:8000,
       messages:[{role:'user',content:[
         {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
         {type:'text',text:buildPrompt(grade,numQ,tipo)}
@@ -498,7 +498,25 @@ async function generateQuizFromPdf(apiKey, file, grade, numQ, tipo) {
   });
   if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||`HTTP ${r.status}`);}
   const d=await r.json();
-  return JSON.parse(d.content[0].text.trim().replace(/^```json\s*/i,'').replace(/\s*```$/,'').trim());
+  const raw=d.content[0].text.trim().replace(/^```json\s*/i,'').replace(/\s*```$/,'').trim();
+  return parseJsonBestEffort(raw);
+}
+
+// Intenta parsear JSON completo; si está truncado, rescata los objetos completos
+function parseJsonBestEffort(text) {
+  try { return JSON.parse(text); } catch(e) {
+    // Extraer objetos JSON completos del array truncado
+    const items=[]; let depth=0, start=-1;
+    for(let i=0;i<text.length;i++){
+      if(text[i]==='{'){if(depth===0)start=i;depth++;}
+      else if(text[i]==='}'){depth--;if(depth===0&&start>=0){
+        try{items.push(JSON.parse(text.slice(start,i+1)));}catch(_){}
+        start=-1;
+      }}
+    }
+    if(items.length>0){console.warn(`JSON truncado: se rescataron ${items.length} preguntas.`);return items;}
+    throw new Error('No se pudo parsear la respuesta. Intenta con menos preguntas.');
+  }
 }
 
 // Retry automático si hay rate limit
@@ -551,7 +569,14 @@ document.getElementById('generateBtn').addEventListener('click',async()=>{
       saveCustom(student,subject,{title,questions:qs}); saved++;
     }catch(err){ failed.push(`${title}: ${err.message}`); }
     // Pausa entre archivos para evitar rate limit
-    if(i<_pdfs.length-1){ updateMsg(`Esperando antes del siguiente PDF…`); await sleep(8000); }
+    if(i<_pdfs.length-1){
+      // Pausa larga entre PDFs: el límite es 10.000 tokens/min de entrada
+      // PDFs grandes pueden usar casi todo ese límite por sí solos
+      for(let s=65;s>0;s--){
+        updateMsg(`⏳ Pausa entre PDFs (${s}s) para no superar el límite de la API…`);
+        await sleep(1000);
+      }
+    }
   }
   statusEl.classList.add('hidden'); document.getElementById('generateBtn').disabled=false;
   const name=student==='santiago'?'Santiago':'Benjamín';
