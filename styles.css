@@ -434,3 +434,8 @@ a:hover { text-decoration: underline; }
 
 /* Form row */
 .form-row { display:flex; gap:12px; }
+
+/* === SYNC SECTION === */
+.sync-section { border-color: #bfdbfe !important; }
+.sync-section h3 { color: #1d4ed8; }
+.sync-status { padding:8px 12px; border-radius:var(--radius-sm); font-size:.82rem; background:var(--surface-2); margin-top:8px; }
