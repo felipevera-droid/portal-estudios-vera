@@ -387,3 +387,18 @@ a:hover { text-decoration: underline; }
   transition: all var(--transition); background: var(--surface-2);
 }
 .import-drop-zone.drag-over { border-color: var(--primary); background: rgba(99,102,241,.07); }
+
+/* === PDF ZONE (v2.1) === */
+.pdf-zone {
+  border: 2px dashed var(--border); border-radius: var(--radius-sm);
+  padding: 18px; text-align: center; background: var(--surface-2);
+  transition: all var(--transition); margin-bottom: 10px;
+}
+.pdf-zone:hover,.pdf-zone.drag-over { border-color: var(--primary); background: rgba(99,102,241,.07); }
+.pdf-hint  { font-size:.73rem; color:var(--muted); margin-top:6px; }
+.label-hint{ font-size:.75rem; color:var(--muted); font-weight:400; }
+.pdf-item  { display:flex; align-items:center; gap:10px; padding:8px 10px; background:var(--surface-2); border-radius:var(--radius-sm); margin-bottom:6px; }
+.pdf-title-inp { width:100%; padding:5px 8px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface); color:var(--text); font-size:.85rem; font-family:inherit; }
+.gen-result { padding:12px 16px; border-radius:var(--radius-sm); font-size:.88rem; margin-top:10px; line-height:1.6; }
+.result-ok    { background:#dcfce7; color:#15803d; border:1px solid #86efac; }
+.result-error { background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; }
