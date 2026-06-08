@@ -352,3 +352,28 @@ a:hover { text-decoration: underline; }
   .profile-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 1.6rem; }
 }
+
+/* === PDF UPLOAD ZONE === */
+.pdf-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 14px;
+  text-align: center;
+  margin-bottom: 10px;
+  transition: all var(--transition);
+  background: var(--surface-2);
+}
+.pdf-drop-zone:hover       { border-color: var(--primary); }
+.pdf-drop-zone.drag-over   { border-color: var(--primary); background: rgba(99,102,241,.07); }
+.pdf-drop-zone.pdf-loading { opacity: .65; pointer-events: none; }
+.pdf-upload-btn            { width: auto; margin: 0 auto; }
+.pdf-hint {
+  font-size: .73rem; color: var(--muted);
+  margin-top: 7px; line-height: 1.4;
+}
+.pdf-status {
+  font-size: .8rem; margin-top: 9px;
+  padding: 7px 12px; background: var(--surface);
+  border-radius: var(--radius-sm); color: var(--muted);
+  text-align: left; line-height: 1.5;
+}
