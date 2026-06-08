@@ -51,7 +51,7 @@
       <button id="dashAdminBtn" class="ghost-btn">⚙️</button>
     </nav>
     <div class="stats-row">
-      <div class="stat-card"><span id="completedCount">0</span><small>quizzes</small></div>
+      <div class="stat-card"><span id="completedCount">0</span><small>tests</small></div>
       <div class="stat-card"><span id="starsCount">0</span><small>⭐ estrellas</small></div>
       <div class="stat-card"><span id="bestScore">0%</span><small>mejor</small></div>
       <div class="stat-card"><span id="streakCount">0</span><small>🔥 racha</small></div>
@@ -74,7 +74,7 @@
     <div id="subjectGrid" class="subject-grid"></div>
   </section>
 
-  <!-- QUIZ LIST -->
+  <!-- TEST LIST -->
   <section id="quizList" class="screen">
     <nav class="topbar">
       <button id="backDashboard" class="ghost-btn">← Volver</button>
@@ -86,22 +86,25 @@
     <div id="quizCards" class="quiz-grid"></div>
   </section>
 
-  <!-- QUIZ -->
+  <!-- TEST (preguntas) -->
   <section id="quizScreen" class="screen">
     <nav class="topbar">
       <button id="exitQuiz" class="ghost-btn">← Salir</button>
       <div>
-        <p class="eyebrow" id="quizMeta">Quiz</p>
+        <p class="eyebrow" id="quizMeta">Test</p>
         <h2 id="quizTitle">Título</h2>
       </div>
     </nav>
     <div class="quiz-panel">
       <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
       <p id="questionCounter" class="counter"></p>
+      <p id="qTypeBadge" class="q-type-badge"></p>
       <h3 id="questionText" class="question"></h3>
+      <!-- MC: botones de opciones / Open: textarea -->
       <div id="options" class="options"></div>
       <div id="feedback" class="feedback hidden"></div>
-      <div class="quiz-actions">
+      <!-- Acciones: cambian según tipo de pregunta -->
+      <div id="quizActions" class="quiz-actions">
         <button id="hintBtn"  class="secondary-btn" style="flex:1">💡 Pista</button>
         <button id="nextBtn"  class="primary-btn"   style="flex:2" disabled>Siguiente →</button>
       </div>
@@ -132,7 +135,6 @@
     </nav>
     <div class="admin-panel">
 
-      <!-- PIN -->
       <div id="pinGate" class="pin-gate">
         <h3>🔐 Acceso admin</h3>
         <p class="pin-note">PIN predeterminado: <strong>1234</strong></p>
@@ -143,9 +145,8 @@
 
       <div id="adminContent" class="hidden">
 
-        <!-- GENERAR DESDE PDF(s) -->
         <div class="admin-section">
-          <h3>✨ Generar quizzes desde PDF</h3>
+          <h3>✨ Generar test desde PDF(s)</h3>
 
           <div class="form-group">
             <label>Estudiante</label>
@@ -158,13 +159,26 @@
             <label>Materia</label>
             <input id="adminSubject" placeholder="Ciencias, Historia, Lenguaje…"/>
           </div>
-          <div class="form-group">
-            <label>Preguntas por quiz</label>
-            <select id="adminNumQ">
-              <option value="5">5 preguntas</option>
-              <option value="8">8 preguntas</option>
-              <option value="10">10 preguntas</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group" style="flex:1">
+              <label>Nº de preguntas por test</label>
+              <select id="adminNumQ">
+                <option value="5">5 preguntas</option>
+                <option value="8">8 preguntas</option>
+                <option value="10" selected>10 preguntas</option>
+                <option value="12">12 preguntas</option>
+                <option value="15">15 preguntas</option>
+                <option value="20">20 preguntas</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:1">
+              <label>Tipo de preguntas</label>
+              <select id="adminQType">
+                <option value="mixed">🔀 Mixto (MC + desarrollo)</option>
+                <option value="mc">⚡ Solo selección múltiple</option>
+                <option value="open">📝 Solo desarrollo</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label>PDFs del colegio <span class="label-hint">(puedes subir varios a la vez)</span></label>
@@ -176,7 +190,7 @@
             <div id="pdfList"></div>
           </div>
 
-          <button id="generateBtn" class="primary-btn ai-btn" disabled>✨ Generar quizzes con IA</button>
+          <button id="generateBtn" class="primary-btn ai-btn" disabled>✨ Generar tests con IA</button>
           <div id="genStatus" class="ai-loading hidden">
             <div class="spinner"></div>
             <span id="genMsg">Procesando…</span>
@@ -184,13 +198,11 @@
           <div id="genResult" class="gen-result hidden"></div>
         </div>
 
-        <!-- QUIZZES GUARDADOS -->
         <div class="admin-section">
-          <h3>🗂️ Quizzes guardados con IA</h3>
+          <h3>🗂️ Tests guardados</h3>
           <div id="customQuizList"></div>
         </div>
 
-        <!-- API KEY -->
         <div class="admin-section">
           <h3>🔑 API Key de Anthropic</h3>
           <p class="hint-text"><a href="https://console.anthropic.com" target="_blank">Obtén tu key aquí →</a></p>
@@ -201,7 +213,6 @@
           <p id="apiKeyStatus" style="font-size:.8rem;margin-top:6px;color:var(--success)"></p>
         </div>
 
-        <!-- PELIGRO -->
         <div class="admin-section danger-zone">
           <h3>⚠️ Zona peligrosa</h3>
           <button id="resetProgress" class="danger-btn">🗑️ Borrar todo el progreso</button>
