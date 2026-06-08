@@ -736,7 +736,84 @@ _dz.addEventListener('drop',      e  => {
   if (file) handlePdfFile(file);
 });
 
+// ============================================================
+// 14. IMPORTAR QUIZZES DESDE JSON
+// ============================================================
 
+/*  Formato esperado (generado por Claude en el chat):
+    [
+      {
+        "student":   "santiago",     // "santiago", "benjamin" o "ambos"
+        "subject":   "Ciencias",
+        "title":     "Los volcanes",
+        "questions": [
+          { "q":"...", "options":["A","B","C","D"], "answer":"A", "hint":"..." }
+        ]
+      }
+    ]
+*/
+
+function importQuizzesFromJson(jsonText) {
+  let data;
+  try { data = JSON.parse(jsonText); }
+  catch(e) { throw new Error('El archivo no es un JSON válido.'); }
+  if (!Array.isArray(data) || data.length === 0)
+    throw new Error('El archivo debe contener un array de quizzes.');
+
+  let imported = 0;
+  const errors = [];
+
+  data.forEach((item, i) => {
+    const { student, subject, title, questions } = item;
+    if (!subject || !title || !Array.isArray(questions) || !questions.length) {
+      errors.push(`Ítem ${i+1}: faltan campos (subject, title, questions).`); return;
+    }
+    const targets = (student === 'ambos' || student === 'both')
+      ? ['santiago', 'benjamin'] : [student || 'santiago'];
+
+    targets.forEach(st => {
+      if (!BUILTIN[st]) { errors.push(`Estudiante desconocido: "${st}"`); return; }
+      saveCustom(st, subject, { title, questions });
+      imported++;
+    });
+  });
+  return { imported, errors };
+}
+
+async function handleJsonImport(file) {
+  const status = document.getElementById('importStatus');
+  status.classList.remove('hidden');
+  status.textContent = 'Leyendo archivo…';
+  try {
+    const text = await file.text();
+    const { imported, errors } = importQuizzesFromJson(text);
+    let msg = `✅ ${imported} quiz${imported!==1?'zes':''} importado${imported!==1?'s':''}.`;
+    if (errors.length) msg += '<br>⚠️ ' + errors.join(' | ');
+    status.innerHTML = msg;
+    renderCustomQuizList();
+    if (S.student) renderDashboard();
+  } catch(err) {
+    status.textContent = '❌ Error: ' + err.message;
+  }
+  document.getElementById('jsonImportInput').value = '';
+}
+
+document.getElementById('jsonImportBtn').addEventListener('click', () =>
+  document.getElementById('jsonImportInput').click());
+document.getElementById('jsonImportInput').addEventListener('change', e => {
+  if (e.target.files[0]) handleJsonImport(e.target.files[0]);
+});
+const _iz = document.getElementById('importDropZone');
+_iz.addEventListener('dragover',  e => { e.preventDefault(); _iz.classList.add('drag-over'); });
+_iz.addEventListener('dragleave', ()  => _iz.classList.remove('drag-over'));
+_iz.addEventListener('drop',      e  => {
+  e.preventDefault(); _iz.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleJsonImport(e.dataTransfer.files[0]);
+});
+
+// ============================================================
+// 15. EVENT LISTENERS GLOBALES
+// ============================================================
 document.querySelectorAll('.profile-card').forEach(btn =>
   btn.addEventListener('click', () => {
     S.student = btn.dataset.student;
