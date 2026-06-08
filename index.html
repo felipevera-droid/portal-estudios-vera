@@ -1,126 +1,223 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Portal de Estudios Vera</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <main class="app-shell">
-    <section id="home" class="screen active">
-      <div class="hero">
-        <p class="eyebrow">Portal familiar</p>
-        <h1>Portal de Estudios Vera</h1>
-        <p class="subtitle">Elige tu perfil, entra a una materia y practica con quizzes interactivos.</p>
-        <div class="home-tools">
-          <button id="themeToggle" class="ghost-btn">Cambiar tema</button>
-          <button id="soundToggle" class="ghost-btn">Sonido: ON</button>
+<main class="app-shell">
+
+  <!-- PANTALLA: HOME -->
+  <section id="home" class="screen active">
+    <div class="hero">
+      <p class="eyebrow">Portal familiar</p>
+      <h1>📚 Portal de Estudios Vera</h1>
+      <p class="subtitle">Elige tu perfil, entra a una materia y practica con quizzes interactivos.</p>
+      <div class="home-tools">
+        <button id="themeToggle" class="ghost-btn">🌙 Modo oscuro</button>
+        <button id="soundToggle" class="ghost-btn">🔊 Sonido: ON</button>
+        <button id="adminBtn"    class="ghost-btn">⚙️ Admin</button>
+      </div>
+    </div>
+    <div class="profile-grid">
+      <button class="profile-card" data-student="santiago">
+        <span class="avatar">🚀</span>
+        <span class="profile-name">Santiago</span>
+        <small>10 años</small>
+        <div class="profile-stats" id="homeStatsSantiago"></div>
+      </button>
+      <button class="profile-card" data-student="benjamin">
+        <span class="avatar">🦊</span>
+        <span class="profile-name">Benjamín</span>
+        <small>9 años</small>
+        <div class="profile-stats" id="homeStatsBenjamin"></div>
+      </button>
+    </div>
+    <div class="parent-note">
+      <strong>Para Felipe:</strong> el progreso se guarda en este navegador.
+      Usa ⚙️ Admin para agregar quizzes con IA o gestionar contenido.
+    </div>
+  </section>
+
+  <!-- PANTALLA: DASHBOARD -->
+  <section id="dashboard" class="screen">
+    <nav class="topbar">
+      <button id="backHome" class="ghost-btn">← Perfil</button>
+      <div class="student-header">
+        <span id="studentAvatar" class="small-avatar">⭐</span>
+        <div>
+          <p class="eyebrow">Estudiando con</p>
+          <h2 id="studentName">Alumno</h2>
         </div>
       </div>
+      <button id="dashAdminBtn" class="ghost-btn">⚙️</button>
+    </nav>
+    <div class="stats-row">
+      <div class="stat-card"><span id="completedCount">0</span><small>quizzes</small></div>
+      <div class="stat-card"><span id="starsCount">0</span><small>⭐ estrellas</small></div>
+      <div class="stat-card"><span id="bestScore">0%</span><small>mejor</small></div>
+      <div class="stat-card"><span id="streakCount">0</span><small>🔥 racha</small></div>
+    </div>
+    <div class="addon-grid">
+      <section class="addon-card">
+        <h3>🏆 Ranking familiar</h3>
+        <div id="rankingList"></div>
+      </section>
+      <section class="addon-card">
+        <h3>🎖️ Logros</h3>
+        <div id="badgesList" class="badge-list"></div>
+      </section>
+      <section class="addon-card">
+        <h3>📅 Sugerido hoy</h3>
+        <ul id="studyPlan" class="study-plan"></ul>
+      </section>
+    </div>
+    <h3 class="section-title">Materias disponibles</h3>
+    <div id="subjectGrid" class="subject-grid"></div>
+  </section>
 
-      <div class="profile-grid">
-        <button class="profile-card" data-student="santiago">
-          <span class="avatar avatar-santiago">🚀</span>
-          <span class="profile-name">Santiago</span>
-          <small>10 años</small>
-        </button>
-        <button class="profile-card" data-student="benjamin">
-          <span class="avatar avatar-benjamin">🦊</span>
-          <span class="profile-name">Benjamín</span>
-          <small>9 años</small>
-        </button>
+  <!-- PANTALLA: LISTA DE QUIZZES -->
+  <section id="quizList" class="screen">
+    <nav class="topbar">
+      <button id="backDashboard" class="ghost-btn">← Volver</button>
+      <div>
+        <p class="eyebrow" id="quizStudentLabel">Alumno</p>
+        <h2 id="subjectTitle">Materia</h2>
+      </div>
+    </nav>
+    <div id="quizCards" class="quiz-grid"></div>
+  </section>
+
+  <!-- PANTALLA: QUIZ -->
+  <section id="quizScreen" class="screen">
+    <nav class="topbar">
+      <button id="exitQuiz" class="ghost-btn">← Salir</button>
+      <div>
+        <p class="eyebrow" id="quizMeta">Quiz</p>
+        <h2 id="quizTitle">Título</h2>
+      </div>
+    </nav>
+    <div class="quiz-panel">
+      <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+      <p id="questionCounter" class="counter"></p>
+      <h3 id="questionText" class="question"></h3>
+      <div id="options" class="options"></div>
+      <div id="feedback" class="feedback hidden"></div>
+      <div class="quiz-actions">
+        <button id="hintBtn"  class="secondary-btn" style="flex:1">💡 Pista</button>
+        <button id="nextBtn"  class="primary-btn"   style="flex:2" disabled>Siguiente →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANTALLA: RESULTADOS -->
+  <section id="resultScreen" class="screen">
+    <div class="result-card">
+      <p class="eyebrow">Resultado final</p>
+      <h2 id="resultTitle"></h2>
+      <div id="scoreCircle" class="score-circle">0%</div>
+      <p id="resultMessage" style="color:var(--muted);margin-bottom:12px"></p>
+      <div id="earnedBadges"></div>
+      <div id="reviewList" class="review-list"></div>
+      <button id="finishQuiz" class="primary-btn" style="margin-top:18px">💾 Guardar y volver</button>
+    </div>
+  </section>
+
+  <!-- PANTALLA: ADMIN -->
+  <section id="adminScreen" class="screen">
+    <nav class="topbar">
+      <button id="backFromAdmin" class="ghost-btn">← Volver</button>
+      <div>
+        <p class="eyebrow">Configuración</p>
+        <h2>Panel Admin</h2>
+      </div>
+    </nav>
+    <div class="admin-panel">
+
+      <!-- PIN GATE -->
+      <div id="pinGate" class="pin-gate">
+        <h3>🔐 Acceso admin</h3>
+        <p class="pin-note">PIN predeterminado: <strong>1234</strong></p>
+        <input id="pinInput" type="password" maxlength="6" class="pin-input" placeholder="••••"/>
+        <button id="pinSubmit" class="primary-btn">Entrar</button>
+        <p id="pinError" class="error-msg hidden">❌ PIN incorrecto</p>
       </div>
 
-      <div class="parent-note">
-        <strong>Para Felipe:</strong> esta versión guarda el progreso en el navegador del computador o tablet. No usa claves ni datos personales externos.
-      </div>
-    </section>
+      <!-- CONTENIDO ADMIN (oculto hasta PIN correcto) -->
+      <div id="adminContent" class="hidden">
 
-    <section id="dashboard" class="screen">
-      <nav class="topbar">
-        <button id="backHome" class="ghost-btn">← Cambiar perfil</button>
-        <div class="student-header">
-          <span id="studentAvatar" class="small-avatar">⭐</span>
-          <div>
-            <p class="eyebrow">Estudiando con</p>
-            <h2 id="studentName">Alumno</h2>
+        <div class="admin-section">
+          <h3>✨ Generar quiz con IA (Claude)</h3>
+          <div class="form-group">
+            <label>Estudiante</label>
+            <select id="adminStudent">
+              <option value="santiago">🚀 Santiago (10 años)</option>
+              <option value="benjamin">🦊 Benjamín (9 años)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Materia</label>
+            <input id="adminSubject" placeholder="Ej: Ciencias, Historia, Lenguaje..."/>
+          </div>
+          <div class="form-group">
+            <label>Título del quiz</label>
+            <input id="adminQuizTitle" placeholder="Ej: Los volcanes de Chile"/>
+          </div>
+          <div class="form-group">
+            <label>Número de preguntas</label>
+            <select id="adminNumQ">
+              <option value="5">5 preguntas</option>
+              <option value="8">8 preguntas</option>
+              <option value="10">10 preguntas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Material de estudio</label>
+            <textarea id="adminMaterial"
+              placeholder="Pega aquí el texto, apuntes o contenido del libro. Cuanto más detallado, mejores preguntas generará la IA..."></textarea>
+          </div>
+          <button id="generateAIBtn" class="primary-btn ai-btn">✨ Generar quiz con IA</button>
+          <div id="aiLoading" class="ai-loading hidden">
+            <div class="spinner"></div>
+            <span>Generando preguntas con Claude AI…</span>
           </div>
         </div>
-      </nav>
 
-      <div class="stats-row">
-        <div class="stat-card"><span id="completedCount">0</span><small>quizzes completados</small></div>
-        <div class="stat-card"><span id="starsCount">0</span><small>estrellas ganadas</small></div>
-        <div class="stat-card"><span id="bestScore">0%</span><small>mejor resultado</small></div>
-        <div class="stat-card"><span id="streakCount">0</span><small>racha de estudio</small></div>
-      </div>
-
-      <div class="addon-grid">
-        <section class="addon-card">
-          <h3>🏆 Ranking familiar</h3>
-          <div id="rankingList" class="ranking-list"></div>
-        </section>
-        <section class="addon-card">
-          <h3>🎖️ Premios</h3>
-          <div id="badgesList" class="badge-list"></div>
-        </section>
-        <section class="addon-card">
-          <h3>📅 Plan de estudio</h3>
-          <ul id="studyPlan" class="study-plan"></ul>
-        </section>
-      </div>
-
-      <h3>Materias</h3>
-      <div id="subjectGrid" class="subject-grid"></div>
-    </section>
-
-    <section id="quizList" class="screen">
-      <nav class="topbar">
-        <button id="backDashboard" class="ghost-btn">← Volver</button>
-        <div>
-          <p class="eyebrow" id="quizStudentLabel">Alumno</p>
-          <h2 id="subjectTitle">Materia</h2>
+        <div id="adminPreview" class="admin-preview hidden">
+          <h3>✅ Preguntas generadas — revisa antes de guardar</h3>
+          <div id="previewContent"></div>
+          <button id="saveQuizBtn" class="primary-btn" style="margin-top:12px">💾 Guardar quiz</button>
         </div>
-      </nav>
-      <div id="quizCards" class="quiz-grid"></div>
-    </section>
 
-    <section id="quizScreen" class="screen">
-      <nav class="topbar">
-        <button id="exitQuiz" class="ghost-btn">← Salir</button>
-        <div>
-          <p class="eyebrow" id="quizMeta">Quiz</p>
-          <h2 id="quizTitle">Título</h2>
+        <div class="admin-section">
+          <h3>🗂️ Quizzes guardados con IA</h3>
+          <div id="customQuizList"></div>
         </div>
-      </nav>
 
-      <div class="quiz-panel">
-        <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
-        <p id="questionCounter" class="counter"></p>
-        <h3 id="questionText" class="question"></h3>
-        <div id="options" class="options"></div>
-        <div id="feedback" class="feedback hidden"></div>
-        <div class="quiz-actions">
-          <button id="hintBtn" class="secondary-btn">Ver pista</button>
-          <button id="nextBtn" class="primary-btn" disabled>Siguiente</button>
+        <div class="admin-section">
+          <h3>🔑 API Key de Anthropic</h3>
+          <p class="hint-text">Necesaria para generar quizzes.
+            <a href="https://console.anthropic.com" target="_blank">Obtén tu key aquí →</a>
+          </p>
+          <div class="api-key-row">
+            <input id="apiKeyInput" type="password" placeholder="sk-ant-api03-…"/>
+            <button id="saveApiKey" class="secondary-btn">Guardar</button>
+          </div>
+          <p id="apiKeyStatus" style="font-size:.8rem;margin-top:6px;color:var(--success)"></p>
         </div>
-      </div>
-    </section>
 
-    <section id="resultScreen" class="screen">
-      <div class="result-card">
-        <p class="eyebrow">Resultado</p>
-        <h2 id="resultTitle">Buen trabajo</h2>
-        <div id="scoreCircle" class="score-circle">0%</div>
-        <p id="resultMessage"></p>
-        <div id="earnedBadges" class="earned-badges"></div>
-        <div id="reviewList" class="review-list"></div>
-        <button id="finishQuiz" class="primary-btn">Guardar y volver</button>
-      </div>
-    </section>
-  </main>
+        <div class="admin-section danger-zone">
+          <h3>⚠️ Zona peligrosa</h3>
+          <button id="resetProgress" class="danger-btn">🗑️ Borrar todo el progreso</button>
+        </div>
 
-  <script src="script.js"></script>
+      </div><!-- /adminContent -->
+    </div>
+  </section>
+
+</main>
+<script src="script.js"></script>
 </body>
 </html>
