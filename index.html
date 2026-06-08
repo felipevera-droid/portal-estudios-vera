@@ -1,157 +1,624 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📚 Portal de Estudios Vera</title>
-  <link rel="stylesheet" href="styles.css"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>📚 Portal de Estudios Vera</title>
+<style>
+:root{--bg:#f0f4ff;--surface:#fff;--s2:#f1f5f9;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--primary:#6366f1;--success:#22c55e;--warning:#f59e0b;--danger:#ef4444;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.14);--r:14px;--rs:8px;--t:.2s ease}
+[data-theme=dark]{--bg:#0f172a;--surface:#1e293b;--s2:#253348;--border:#334155;--text:#f1f5f9;--muted:#94a3b8;--shadow:0 2px 12px rgba(0,0,0,.35);--shadow-lg:0 8px 32px rgba(0,0,0,.5)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--t),color var(--t)}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--primary);text-decoration:none}
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+.shell{max-width:600px;margin:0 auto;padding:0 16px 80px}
+.hidden{display:none!important}
+/* HOME */
+.hero{padding:36px 0 20px;text-align:center}
+.hero h1{font-size:1.9rem;font-weight:800;margin:6px 0 8px}
+.eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--primary);font-weight:700}
+.subtitle{color:var(--muted);margin:4px 0 18px;font-size:.95rem}
+.home-tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:4px}
+.profiles{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.profile-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:28px 16px 20px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:var(--shadow);transition:all var(--t)}
+.profile-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.avatar{font-size:3rem}
+.pname{font-size:1.2rem;font-weight:700}
+.pstats{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.pstats span{background:var(--s2);padding:2px 9px;border-radius:20px;font-size:.8rem;color:var(--muted)}
+/* TOPBAR */
+.topbar{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;gap:10px;padding:12px 0;z-index:10;backdrop-filter:blur(10px);border-bottom:1px solid var(--border);margin-bottom:12px}
+.topbar>div{flex:1}
+.topbar h2{font-size:1.05rem}
+.stu-header{display:flex;align-items:center;gap:10px}
+.small-av{font-size:1.9rem}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat-card{background:var(--surface);border-radius:var(--r);padding:12px 6px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border)}
+.stat-card span{font-size:1.4rem;font-weight:800;color:var(--primary);display:block;line-height:1.1}
+.stat-card small{font-size:.68rem;color:var(--muted)}
+/* ADDONS */
+.addon-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.addon-card{background:var(--surface);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.addon-card:first-child{grid-column:1/-1}
+.addon-card h3{font-size:.88rem;font-weight:700;margin-bottom:10px}
+.rank-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--rs);font-size:.88rem;margin-bottom:4px}
+.rank-item.cur{background:var(--s2)}
+.rank-name{flex:1;font-weight:600}
+.rank-stars{color:var(--warning);font-weight:600}
+.rank-count{font-size:.73rem;color:var(--muted)}
+.badge-list{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 8px;border-radius:var(--rs);min-width:64px;text-align:center}
+.badge.on{background:linear-gradient(135deg,#fef9c3,#fde68a);border:1px solid #fbbf24}
+.badge.off{background:var(--s2);border:1px dashed var(--border);opacity:.55}
+.badge-icon{font-size:1.6rem}
+.badge-name{font-size:.65rem;color:var(--muted);font-weight:600}
+.study-plan{list-style:none}
+.plan-item{padding:8px 10px;border-radius:var(--rs);font-size:.85rem;cursor:pointer;transition:background var(--t);margin-bottom:3px}
+.plan-item:hover{background:var(--s2)}
+.plan-done{padding:8px;font-size:.85rem;color:var(--success);font-weight:600}
+/* SUBJECTS */
+.sec-title{font-size:.95rem;font-weight:700;margin:4px 0 10px}
+.subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.subject-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:20px 16px;transition:all var(--t);text-align:left;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow);position:relative}
+.subject-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.subject-card.done{border-color:#86efac}
+.sicon{font-size:1.9rem;margin-bottom:2px}
+.subject-card h3{font-size:.95rem;font-weight:700}
+.subject-card p{font-size:.78rem;color:var(--muted)}
+.done-badge{position:absolute;top:8px;right:10px;font-size:.65rem;color:var(--success);font-weight:700}
+/* TEST LIST */
+.test-grid{display:grid;gap:12px;padding-bottom:20px}
+.test-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:20px;transition:all var(--t);text-align:left;box-shadow:var(--shadow)}
+.test-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--primary)}
+.test-card h3{font-size:1rem;font-weight:700;margin-bottom:5px}
+.test-card p{font-size:.82rem;color:var(--muted)}
+.test-hist{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-size:.8rem;color:var(--muted)}
+.test-new{font-size:.82rem;color:var(--primary);font-weight:700;margin-top:6px}
+.ai-badge{font-size:.68rem;background:linear-gradient(135deg,#818cf8,#6366f1);color:#fff;padding:2px 8px;border-radius:20px;margin-left:6px}
+/* QUIZ PANEL */
+.quiz-panel{padding:16px 0}
+.prog-wrap{height:7px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:16px}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--primary),#a5b4fc);border-radius:4px;transition:width .4s ease}
+.counter{font-size:.82rem;color:var(--muted);margin-bottom:6px}
+.q-badge{font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.q-badge.mc{background:#ede9fe;color:#6d28d9}
+.q-badge.open{background:#fef3c7;color:#92400e}
+.question{font-size:1.25rem;font-weight:700;margin-bottom:22px;line-height:1.4}
+.options{display:grid;gap:10px;margin-bottom:14px}
+.opt-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:14px 16px;font-size:.98rem;transition:all var(--t);text-align:left;color:var(--text)}
+.opt-btn:hover:not(:disabled){border-color:var(--primary);background:var(--s2)}
+.opt-btn.correct{background:#dcfce7;border-color:var(--success);color:#15803d;font-weight:700}
+.opt-btn.wrong{background:#fee2e2;border-color:var(--danger);color:#dc2626}
+.opt-btn:disabled{cursor:default}
+.open-ans{width:100%;padding:12px;border:2px solid var(--border);border-radius:var(--r);background:var(--surface);color:var(--text);font-size:.95rem;font-family:inherit;resize:vertical;min-height:100px;transition:border-color var(--t)}
+.open-ans:focus{outline:none;border-color:var(--primary)}
+.open-ans:disabled{opacity:.7;background:var(--s2)}
+.feedback{padding:12px 16px;border-radius:var(--rs);font-size:.9rem;margin-bottom:12px}
+.feedback.good{background:#dcfce7;color:#15803d;border:1px solid #86efac}
+.feedback.bad{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5}
+.feedback.hint{background:#fef9c3;color:#854d0e;border:1px solid #fde68a}
+.feedback.reveal{background:#fef9c3;color:#78350f;border:1px solid #fde68a;line-height:1.7}
+.quiz-actions{display:flex;gap:10px}
+.self-btn{flex:1;padding:14px;border:none;border-radius:var(--r);font-size:1rem;font-weight:700;transition:all var(--t);font-family:inherit}
+.self-yes{background:#dcfce7;color:#15803d}
+.self-yes:hover{background:#bbf7d0}
+.self-no{background:#fee2e2;color:#dc2626}
+.self-no:hover{background:#fecaca}
+/* RESULTS */
+.result-card{max-width:480px;margin:32px auto;background:var(--surface);border-radius:20px;padding:32px;box-shadow:var(--shadow-lg);text-align:center;border:1px solid var(--border)}
+.result-card h2{font-size:1.5rem;margin-bottom:18px}
+.score-circle{width:120px;height:120px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;margin:0 auto 18px;transition:background .5s}
+.stars-earned{font-size:1.1rem;color:var(--warning);margin:10px 0}
+.review-list{margin:14px 0;text-align:left}
+.rev-item{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:var(--rs);margin-bottom:6px;font-size:.85rem}
+.rev-item.ok{background:#f0fdf4}
+.rev-item.no{background:#fef2f2}
+.rev-ans{color:var(--muted);font-size:.8rem}
+/* ADMIN */
+.admin-panel{padding:12px 0}
+.pin-gate{max-width:300px;margin:50px auto;background:var(--surface);padding:32px;border-radius:var(--r);box-shadow:var(--shadow-lg);text-align:center;border:1px solid var(--border)}
+.pin-gate h3{font-size:1.1rem;margin-bottom:6px}
+.pin-note{font-size:.78rem;color:var(--muted);margin-bottom:16px}
+.pin-inp{font-size:2rem!important;letter-spacing:.4em!important;text-align:center!important;margin-bottom:12px;width:100%;padding:10px;border:2px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-family:inherit}
+.admin-info{background:linear-gradient(135deg,#ede9fe,#fce7f3);border-radius:var(--r);padding:16px 18px;font-size:.9rem;line-height:1.6;margin-bottom:14px;border:1px solid #ddd6fe}
+[data-theme=dark] .admin-info{background:linear-gradient(135deg,#1e1b4b,#2d1b2e);border-color:#4c1d95}
+.admin-sec{background:var(--surface);border-radius:var(--r);padding:20px;margin-bottom:14px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.admin-sec h3{font-size:.95rem;margin-bottom:14px}
+.custom-student{margin-bottom:12px}
+.custom-student>strong{display:block;margin-bottom:6px;font-size:.9rem}
+.custom-quiz-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--s2);border-radius:var(--rs);margin-bottom:4px;font-size:.82rem}
+.export-answers{background:var(--surface);border:2px solid var(--primary);border-radius:var(--rs);padding:12px;margin-bottom:8px;font-size:.82rem;color:var(--muted);max-height:200px;overflow-y:auto;white-space:pre-wrap;font-family:monospace}
+.danger-zone{border-color:#fca5a5!important}
+.danger-zone h3{color:var(--danger)}
+.error-msg{color:var(--danger);font-size:.83rem;margin-top:8px}
+.empty-state{color:var(--muted);font-size:.88rem;padding:12px;text-align:center}
+/* BUTTONS */
+.primary-btn{background:linear-gradient(135deg,var(--primary),#818cf8);color:#fff;border:none;border-radius:var(--rs);padding:12px 20px;font-size:.95rem;font-weight:600;transition:all var(--t);width:100%;font-family:inherit}
+.primary-btn:hover:not(:disabled){opacity:.9;transform:translateY(-1px)}
+.primary-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.secondary-btn{background:var(--surface);color:var(--primary);border:2px solid var(--primary);border-radius:var(--rs);padding:10px 16px;font-size:.9rem;font-weight:600;transition:all var(--t);font-family:inherit}
+.secondary-btn:hover{background:var(--primary);color:#fff}
+.ghost-btn{background:transparent;border:1px solid var(--border);border-radius:var(--rs);padding:8px 14px;font-size:.83rem;color:var(--muted);transition:all var(--t);font-family:inherit}
+.ghost-btn:hover{background:var(--surface);color:var(--text)}
+.danger-btn{background:var(--danger);color:#fff;border:none;border-radius:var(--rs);padding:10px 16px;font-size:.9rem;font-weight:600;width:100%;font-family:inherit}
+.copy-btn{background:var(--primary);color:#fff;border:none;border-radius:var(--rs);padding:8px 14px;font-size:.82rem;font-family:inherit}
+input,select,textarea{width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:var(--rs);background:var(--surface);color:var(--text);font-size:.9rem;transition:border-color var(--t);font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)}
+@media(max-width:380px){.stats-row{grid-template-columns:repeat(2,1fr)}.addon-grid,.profiles{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-<main class="app-shell">
+<main class="shell">
 
-  <!-- HOME -->
-  <section id="home" class="screen active">
-    <div class="hero">
-      <p class="eyebrow">Portal familiar</p>
-      <h1>📚 Portal de Estudios Vera</h1>
-      <p class="subtitle">Elige tu perfil, entra a una materia y practica.</p>
-      <div class="home-tools">
-        <button id="themeToggle" class="ghost-btn">🌙 Modo oscuro</button>
-        <button id="soundToggle" class="ghost-btn">🔊 Sonido: ON</button>
-        <button id="adminBtn"    class="ghost-btn">⚙️</button>
-      </div>
+<!-- HOME -->
+<section id="home" class="screen active">
+  <div class="hero">
+    <p class="eyebrow">Portal familiar</p>
+    <h1>📚 Portal de Estudios Vera</h1>
+    <p class="subtitle">Elige tu perfil y practica con tus tests.</p>
+    <div class="home-tools">
+      <button id="themeToggle" class="ghost-btn">🌙 Modo oscuro</button>
+      <button id="soundToggle" class="ghost-btn">🔊 Sonido: ON</button>
+      <button id="adminBtn"    class="ghost-btn">⚙️</button>
     </div>
-    <div class="profile-grid">
-      <button class="profile-card" data-student="santiago">
-        <span class="avatar">🚀</span>
-        <span class="profile-name">Santiago</span>
-        <div class="profile-stats" id="homeStatsSantiago"></div>
-      </button>
-      <button class="profile-card" data-student="benjamin">
-        <span class="avatar">🦊</span>
-        <span class="profile-name">Benjamín</span>
-        <div class="profile-stats" id="homeStatsBenjamin"></div>
-      </button>
-    </div>
-  </section>
+  </div>
+  <div class="profiles">
+    <button class="profile-card" data-student="santiago">
+      <span class="avatar">🚀</span>
+      <span class="pname">Santiago</span>
+      <div class="pstats" id="psSantiago"></div>
+    </button>
+    <button class="profile-card" data-student="benjamin">
+      <span class="avatar">🦊</span>
+      <span class="pname">Benjamín</span>
+      <div class="pstats" id="psBenjamin"></div>
+    </button>
+  </div>
+</section>
 
-  <!-- DASHBOARD -->
-  <section id="dashboard" class="screen">
-    <nav class="topbar">
-      <button id="backHome" class="ghost-btn">← Perfil</button>
-      <div class="student-header">
-        <span id="studentAvatar" class="small-avatar">⭐</span>
-        <div>
-          <p class="eyebrow">Estudiando con</p>
-          <h2 id="studentName">Alumno</h2>
-        </div>
-      </div>
-      <button id="dashAdminBtn" class="ghost-btn">⚙️</button>
-    </nav>
-    <div class="stats-row">
-      <div class="stat-card"><span id="completedCount">0</span><small>tests</small></div>
-      <div class="stat-card"><span id="starsCount">0</span><small>⭐ estrellas</small></div>
-      <div class="stat-card"><span id="bestScore">0%</span><small>mejor</small></div>
-      <div class="stat-card"><span id="streakCount">0</span><small>🔥 racha</small></div>
+<!-- DASHBOARD -->
+<section id="dashboard" class="screen">
+  <nav class="topbar">
+    <button id="backHome" class="ghost-btn">← Perfil</button>
+    <div class="stu-header">
+      <span id="stuAvatar" class="small-av">⭐</span>
+      <div><p class="eyebrow">Estudiando con</p><h2 id="stuName">Alumno</h2></div>
     </div>
-    <div class="addon-grid">
-      <section class="addon-card">
-        <h3>🏆 Ranking familiar</h3>
-        <div id="rankingList"></div>
-      </section>
-      <section class="addon-card">
-        <h3>🎖️ Logros</h3>
-        <div id="badgesList" class="badge-list"></div>
-      </section>
-      <section class="addon-card">
-        <h3>📅 Sugerido hoy</h3>
-        <ul id="studyPlan" class="study-plan"></ul>
-      </section>
-    </div>
-    <h3 class="section-title">Materias</h3>
-    <div id="subjectGrid" class="subject-grid"></div>
-  </section>
+    <button id="dashAdmin" class="ghost-btn">⚙️</button>
+  </nav>
+  <div class="stats-row">
+    <div class="stat-card"><span id="cCompleted">0</span><small>tests</small></div>
+    <div class="stat-card"><span id="cStars">0</span><small>⭐ estrellas</small></div>
+    <div class="stat-card"><span id="cBest">0%</span><small>mejor</small></div>
+    <div class="stat-card"><span id="cStreak">0</span><small>🔥 racha</small></div>
+  </div>
+  <div class="addon-grid">
+    <section class="addon-card"><h3>🏆 Ranking familiar</h3><div id="ranking"></div></section>
+    <section class="addon-card"><h3>🎖️ Logros</h3><div id="badges" class="badge-list"></div></section>
+    <section class="addon-card"><h3>📅 Sugerido hoy</h3><ul id="plan" class="study-plan"></ul></section>
+  </div>
+  <h3 class="sec-title">Materias</h3>
+  <div id="subjects" class="subject-grid"></div>
+</section>
 
-  <!-- LISTA DE TESTS -->
-  <section id="quizList" class="screen">
-    <nav class="topbar">
-      <button id="backDashboard" class="ghost-btn">← Volver</button>
-      <div>
-        <p class="eyebrow" id="quizStudentLabel">Alumno</p>
-        <h2 id="subjectTitle">Materia</h2>
-      </div>
-    </nav>
-    <div id="quizCards" class="quiz-grid"></div>
-  </section>
+<!-- TEST LIST -->
+<section id="testList" class="screen">
+  <nav class="topbar">
+    <button id="backDash" class="ghost-btn">← Volver</button>
+    <div><p class="eyebrow" id="tlStudent">Alumno</p><h2 id="tlSubject">Materia</h2></div>
+  </nav>
+  <div id="testCards" class="test-grid"></div>
+</section>
 
-  <!-- TEST -->
-  <section id="quizScreen" class="screen">
-    <nav class="topbar">
-      <button id="exitQuiz" class="ghost-btn">← Salir</button>
-      <div>
-        <p class="eyebrow" id="quizMeta">Test</p>
-        <h2 id="quizTitle">Título</h2>
-      </div>
-    </nav>
-    <div class="quiz-panel">
-      <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
-      <p id="questionCounter" class="counter"></p>
-      <p id="qTypeBadge" class="q-type-badge"></p>
-      <h3 id="questionText" class="question"></h3>
-      <div id="options" class="options"></div>
-      <div id="feedback" class="feedback hidden"></div>
-      <div id="quizActions" class="quiz-actions"></div>
+<!-- TEST -->
+<section id="testScreen" class="screen">
+  <nav class="topbar">
+    <button id="exitTest" class="ghost-btn">← Salir</button>
+    <div><p class="eyebrow" id="testMeta">Test</p><h2 id="testTitle">Título</h2></div>
+  </nav>
+  <div class="quiz-panel">
+    <div class="prog-wrap"><div id="progBar" class="prog-bar"></div></div>
+    <p id="qCounter" class="counter"></p>
+    <p id="qBadge" class="q-badge"></p>
+    <h3 id="qText" class="question"></h3>
+    <div id="qOptions" class="options"></div>
+    <div id="qFeedback" class="feedback hidden"></div>
+    <div id="qActions" class="quiz-actions"></div>
+  </div>
+</section>
+
+<!-- RESULTADOS -->
+<section id="resultScreen" class="screen">
+  <div class="result-card">
+    <p class="eyebrow">Resultado final</p>
+    <h2 id="resTitle"></h2>
+    <div id="resCircle" class="score-circle">0%</div>
+    <p id="resMsg" style="color:var(--muted);margin-bottom:12px"></p>
+    <div id="resStars"></div>
+    <div id="resReview" class="review-list"></div>
+    <button id="finishBtn" class="primary-btn" style="margin-top:18px">💾 Guardar y volver</button>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section id="adminScreen" class="screen">
+  <nav class="topbar">
+    <button id="backAdmin" class="ghost-btn">← Volver</button>
+    <div><p class="eyebrow">Administración</p><h2>Panel Admin</h2></div>
+  </nav>
+  <div class="admin-panel">
+    <div id="pinGate" class="pin-gate">
+      <h3>🔐 Acceso admin</h3>
+      <p class="pin-note">PIN: <strong>1234</strong></p>
+      <input id="pinInput" type="password" maxlength="6" class="pin-inp" placeholder="••••"/>
+      <button id="pinBtn" class="primary-btn" style="margin-top:8px">Entrar</button>
+      <p id="pinErr" class="error-msg hidden">❌ PIN incorrecto</p>
     </div>
-  </section>
-
-  <!-- RESULTADOS -->
-  <section id="resultScreen" class="screen">
-    <div class="result-card">
-      <p class="eyebrow">Resultado final</p>
-      <h2 id="resultTitle"></h2>
-      <div id="scoreCircle" class="score-circle">0%</div>
-      <p id="resultMessage" style="color:var(--muted);margin-bottom:12px"></p>
-      <div id="earnedBadges"></div>
-      <div id="reviewList" class="review-list"></div>
-      <button id="finishQuiz" class="primary-btn" style="margin-top:18px">💾 Guardar y volver</button>
-    </div>
-  </section>
-
-  <!-- ADMIN (solo borrar) -->
-  <section id="adminScreen" class="screen">
-    <nav class="topbar">
-      <button id="backFromAdmin" class="ghost-btn">← Volver</button>
-      <div>
-        <p class="eyebrow">Administración</p>
-        <h2>Panel Admin</h2>
+    <div id="adminContent" class="hidden">
+      <div class="admin-info">
+        🤖 Para agregar tests, sube los PDFs del colegio al <strong>chat de Claude</strong>. Él los genera y los publica aquí automáticamente.
       </div>
-    </nav>
-    <div class="admin-panel">
-      <div id="pinGate" class="pin-gate">
-        <h3>🔐 Acceso admin</h3>
-        <p class="pin-note">PIN: <strong>1234</strong></p>
-        <input id="pinInput" type="password" maxlength="6" class="pin-input" placeholder="••••"/>
-        <button id="pinSubmit" class="primary-btn">Entrar</button>
-        <p id="pinError" class="error-msg hidden">❌ PIN incorrecto</p>
+      <div class="admin-sec">
+        <h3>🗂️ Tests publicados</h3>
+        <div id="adminTests"></div>
       </div>
-      <div id="adminContent" class="hidden">
-        <div class="admin-info">
-          <p>🤖 Para agregar tests, sube los PDFs del colegio al <strong>chat de Claude</strong>.<br>
-          Él los genera y los publica aquí automáticamente.</p>
-        </div>
-        <div class="admin-section">
-          <h3>🗂️ Tests publicados</h3>
-          <div id="customQuizList"></div>
-        </div>
-        <div class="admin-section danger-zone">
-          <h3>⚠️ Zona peligrosa</h3>
-          <button id="resetProgress" class="danger-btn">🗑️ Borrar todo el progreso</button>
-        </div>
+      <div class="admin-sec">
+        <h3>📋 Respuestas para evaluar</h3>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:10px">Copia esto y pégalo en el chat de Claude para que evalúe las respuestas.</p>
+        <div id="answersExport" class="export-answers">Sin respuestas guardadas aún.</div>
+        <button id="copyAnswers" class="copy-btn" style="margin-top:8px;width:100%">📋 Copiar respuestas</button>
+      </div>
+      <div class="admin-sec danger-zone">
+        <h3>⚠️ Zona peligrosa</h3>
+        <button id="resetBtn" class="danger-btn">🗑️ Borrar todo el progreso</button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
 </main>
-<script src="script.js"></script>
+<script>
+// ============================================================
+// PORTAL DE ESTUDIOS VERA — v3.1 (all-in-one)
+// ============================================================
+const DATA_URL = 'https://felipevera-droid.github.io/vera/data.json';
+
+const BUILTIN = {
+  santiago:{
+    'Matemáticas':[
+      {title:'Multiplicaciones rápidas',questions:[
+        {type:'mc',q:'7 × 8',options:['54','56','48','64'],answer:'56',hint:'7 grupos de 8.'},
+        {type:'mc',q:'9 × 6',options:['56','48','54','42'],answer:'54',hint:'9 veces 6.'},
+        {type:'mc',q:'12 × 4',options:['44','48','52','42'],answer:'48',hint:'4 grupos de 12.'},
+        {type:'mc',q:'15 × 3',options:['30','45','60','35'],answer:'45',hint:'3 grupos de 15.'},
+        {type:'open',q:'Explica qué es una fracción y da un ejemplo.',answer:'Una fracción representa una parte de un entero. Ejemplo: 1/2 es la mitad.',hint:'Piensa en una pizza dividida en partes iguales.'}
+      ]},
+      {title:'Fracciones básicas',questions:[
+        {type:'mc',q:'¿Cuál fracción es la mitad?',options:['1/2','1/3','2/5','3/4'],answer:'1/2',hint:'Dividir en dos partes iguales.'},
+        {type:'mc',q:'2/4 equivale a:',options:['1/2','1/3','3/4','2/3'],answer:'1/2',hint:'Simplifica dividiendo entre 2.'},
+        {type:'open',q:'¿Por qué 2/4 y 1/2 son equivalentes? Explícalo.',answer:'Porque representan la misma cantidad. 2/4 simplificado (÷2) da 1/2.',hint:'Piensa en dividir algo en partes iguales.'}
+      ]}
+    ],
+    'Historia':[{title:'Chile y sus regiones',questions:[
+      {type:'mc',q:'¿Capital de Chile?',options:['Valparaíso','Concepción','Santiago','Temuco'],answer:'Santiago',hint:'Donde está La Moneda.'},
+      {type:'mc',q:'¿Cuántas regiones tiene Chile?',options:['12','14','16','18'],answer:'16',hint:'Más de 15.'},
+      {type:'open',q:'¿Por qué Chile tiene forma tan larga y angosta? Explica.',answer:'Por la Cordillera de los Andes al este y el Océano Pacífico al oeste.',hint:'Piensa en los accidentes geográficos.'}
+    ]}],
+    'Ciencias':[{title:'Sistema solar',questions:[
+      {type:'mc',q:'¿El planeta rojo?',options:['Venus','Marte','Júpiter','Saturno'],answer:'Marte',hint:'Color rojizo.'},
+      {type:'mc',q:'¿La estrella del sistema solar?',options:['La Luna','Marte','El Sol','Venus'],answer:'El Sol',hint:'Nos da luz y calor.'},
+      {type:'open',q:'¿Qué diferencia hay entre un planeta y una estrella?',answer:'Las estrellas generan su propia luz (como el Sol). Los planetas reflejan la luz de las estrellas.',hint:'Piensa en qué produce el Sol vs qué hace la Tierra.'}
+    ]}]
+  },
+  benjamin:{
+    'Matemáticas':[
+      {title:'Sumas y restas',questions:[
+        {type:'mc',q:'45 + 27',options:['62','72','82','70'],answer:'72',hint:'Suma decenas y unidades.'},
+        {type:'mc',q:'90 - 38',options:['62','52','58','42'],answer:'52',hint:'Resta 30 y luego 8.'},
+        {type:'mc',q:'8 × 7',options:['54','48','56','64'],answer:'56',hint:'7 grupos de 8.'},
+        {type:'open',q:'Si tienes 90 fichas y regalas 38, ¿cuántas quedan? Explica cómo.',answer:'52 fichas. Resto 90-30=60, luego 60-8=52.',hint:'Separa la resta en dos pasos.'}
+      ]},
+      {title:'Geometría básica',questions:[
+        {type:'mc',q:'¿Lados de un triángulo?',options:['2','3','4','5'],answer:'3',hint:'La pista está en el nombre.'},
+        {type:'mc',q:'¿Figura con 4 lados iguales?',options:['Triángulo','Rectángulo','Cuadrado','Círculo'],answer:'Cuadrado',hint:'Como una caja perfecta.'},
+        {type:'open',q:'¿Qué diferencia hay entre un cuadrado y un rectángulo?',answer:'Un cuadrado tiene los 4 lados iguales. Un rectángulo tiene 2 lados largos y 2 cortos.',hint:'Piensa en las medidas de sus lados.'}
+      ]}
+    ],
+    'Lenguaje':[{title:'Sinónimos y antónimos',questions:[
+      {type:'mc',q:'¿Qué es un sinónimo?',options:['Palabra igual','Palabra opuesta','Animal','Número'],answer:'Palabra igual',hint:'Significa parecido.'},
+      {type:'mc',q:'¿Qué es un antónimo?',options:['Palabra parecida','Palabra opuesta','Una oración','Un cuento'],answer:'Palabra opuesta',hint:'Es lo contrario.'},
+      {type:'open',q:'Escribe un sinónimo y un antónimo para "rápido".',answer:'Sinónimo: veloz, ágil. Antónimo: lento, despacio.',hint:'Piensa en palabras parecidas y contrarias.'}
+    ]}]
+  }
+};
+
+const BADGES=[
+  {id:'first',icon:'🌟',name:'Primera estrella',check:p=>p.totalCompleted>=1},
+  {id:'perfect',icon:'💯',name:'¡Perfecto!',check:p=>p.bestScore>=100},
+  {id:'streak3',icon:'🔥',name:'En racha',check:p=>p.streak>=3},
+  {id:'quiz5',icon:'📚',name:'Estudioso',check:p=>p.totalCompleted>=5},
+  {id:'quiz10',icon:'🎓',name:'Académico',check:p=>p.totalCompleted>=10},
+  {id:'stars20',icon:'✨',name:'Coleccionista',check:p=>p.totalStars>=20}
+];
+
+const ICONS={'Matemáticas':'🔢','Historia':'📜','Ciencias':'🔬','Lenguaje':'📝','Inglés':'🌎','Arte':'🎨','Música':'🎵','Tecnología':'💻','Biología':'🧬','Física':'⚡','Química':'🧪'};
+
+// STATE
+const S={student:'',quiz:[],meta:{},idx:0,score:0,answers:[],lastPct:0,lastOk:0,subject:''};
+let _cache=[], _audioCtx=null;
+
+// STORAGE
+function getPrg(st){const d={quizHistory:[],streak:0,lastStudyDate:null,totalCompleted:0,totalStars:0,bestScore:0};const r=localStorage.getItem('prg_'+st);return r?{...d,...JSON.parse(r)}:d;}
+function savePrg(st,meta,pct,ok,total){
+  const p=getPrg(st),td=today(),stars=Math.ceil(pct/20);
+  if(p.lastStudyDate!==td){const yd=new Date(Date.now()-86400000).toISOString().slice(0,10);p.streak=(p.lastStudyDate===yd)?p.streak+1:1;p.lastStudyDate=td;}
+  p.quizHistory.push({quizId:meta.id,subject:meta.subject,title:meta.title,date:td,score:pct,ok,total,stars});
+  p.totalCompleted++;p.totalStars+=stars;p.bestScore=Math.max(p.bestScore,pct);
+  localStorage.setItem('prg_'+st,JSON.stringify(p));
+}
+function getRemote(st){const r=localStorage.getItem('remote');return r?JSON.parse(r)[st]||{}:{};}
+function setRemote(d){localStorage.setItem('remote',JSON.stringify(d));}
+function getSettings(){return JSON.parse(localStorage.getItem('cfg')||'{"theme":"light","sound":true,"pin":"1234"}');}
+function setSetting(k,v){const s=getSettings();s[k]=v;localStorage.setItem('cfg',JSON.stringify(s));}
+
+// Guardar respuestas de desarrollo para exportar
+function saveAnswer(st,testTitle,question,answer,modelAnswer,ok){
+  const key='answers_'+st;
+  const all=JSON.parse(localStorage.getItem(key)||'[]');
+  all.push({date:today(),test:testTitle,question,answer,modelAnswer,ok});
+  // Mantener solo los últimos 50
+  if(all.length>50)all.splice(0,all.length-50);
+  localStorage.setItem(key,JSON.stringify(all));
+}
+function getAllAnswers(){
+  const result={};
+  ['santiago','benjamin'].forEach(st=>{
+    const d=JSON.parse(localStorage.getItem('answers_'+st)||'[]');
+    if(d.length)result[st==='santiago'?'Santiago':'Benjamín']=d;
+  });
+  return result;
+}
+
+// UTILS
+function today(){return new Date().toISOString().slice(0,10);}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function allSubs(st){return[...new Set([...Object.keys(BUILTIN[st]||{}),...Object.keys(getRemote(st))])];}
+function allTests(st,s){return[...(BUILTIN[st]||{})[s]||[],...getRemote(st)[s]||[]];}
+function qid(st,s,t){return[st,s,t].join('_').replace(/\s+/g,'_');}
+function stars(pct){const n=Math.min(5,Math.ceil(pct/20));return'⭐'.repeat(n)+'☆'.repeat(5-n);}
+
+// AUDIO
+function playSound(type){
+  if(!getSettings().sound)return;
+  try{
+    if(!_audioCtx)_audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const ctx=_audioCtx;
+    const ns=type==='correct'?[523,659,784]:type==='wrong'?[300,200]:type==='complete'?[523,659,784,1047]:[];
+    ns.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;const t=ctx.currentTime+i*.1;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3);});
+  }catch(e){}
+}
+
+// THEME
+function applyTheme(){
+  const t=getSettings().theme;
+  document.body.setAttribute('data-theme',t);
+  document.getElementById('themeToggle').textContent=t==='dark'?'☀️ Modo claro':'🌙 Modo oscuro';
+}
+
+// REMOTE
+async function loadRemote(){
+  try{const r=await fetch(DATA_URL+'?_='+Date.now());if(!r.ok)return;const d=await r.json();if(Object.keys(d).length)setRemote(d);}
+  catch(e){}
+}
+
+// NAV
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+
+// HOME
+function renderHome(){
+  ['santiago','benjamin'].forEach(st=>{
+    const p=getPrg(st),el=document.getElementById('ps'+st[0].toUpperCase()+st.slice(1));
+    if(el)el.innerHTML=(p.totalStars?'<span>⭐ '+p.totalStars+'</span>':'')+(p.totalCompleted?'<span>📝 '+p.totalCompleted+'</span>':'')+(p.streak>0?'<span>🔥 '+p.streak+'</span>':'');
+  });
+}
+
+// DASHBOARD
+function renderDash(){
+  const st=S.student,p=getPrg(st);
+  document.getElementById('stuAvatar').textContent={santiago:'🚀',benjamin:'🦊'}[st]||'⭐';
+  document.getElementById('stuName').textContent=st==='santiago'?'Santiago':'Benjamín';
+  document.getElementById('cCompleted').textContent=p.totalCompleted;
+  document.getElementById('cStars').textContent=p.totalStars;
+  document.getElementById('cBest').textContent=p.bestScore+'%';
+  document.getElementById('cStreak').textContent=p.streak;
+  renderRanking();renderBadges(p);renderPlan(st,p);renderSubjects(st);
+}
+function renderRanking(){
+  const rows=[{n:'Santiago',av:'🚀',p:getPrg('santiago')},{n:'Benjamín',av:'🦊',p:getPrg('benjamin')}].sort((a,b)=>b.p.totalStars-a.p.totalStars);
+  document.getElementById('ranking').innerHTML=rows.map((r,i)=>'<div class="rank-item '+(r.n.toLowerCase()===S.student?'cur':'')+'"><span class="rank-pos">'+(i===0?'🥇':'🥈')+'</span><span>'+r.av+'</span><span class="rank-name">'+r.n+'</span><span class="rank-stars">⭐ '+r.p.totalStars+'</span><span class="rank-count">'+r.p.totalCompleted+' tests</span></div>').join('');
+}
+function renderBadges(p){
+  const earned=BADGES.filter(b=>b.check(p)),pending=BADGES.filter(b=>!b.check(p)).slice(0,Math.max(2,4-earned.length));
+  document.getElementById('badges').innerHTML=earned.map(b=>'<div class="badge on"><span class="badge-icon">'+b.icon+'</span><span class="badge-name">'+b.name+'</span></div>').join('')+pending.map(b=>'<div class="badge off"><span class="badge-icon">🔒</span><span class="badge-name">'+b.name+'</span></div>').join('');
+}
+function renderPlan(st,p){
+  const studied=new Set((p.quizHistory||[]).filter(h=>h.date===today()).map(h=>h.subject));
+  const sugg=allSubs(st).filter(s=>!studied.has(s)).slice(0,3);
+  const el=document.getElementById('plan');
+  el.innerHTML=sugg.length===0?'<li class="plan-done">✅ ¡Todo listo por hoy!</li>':sugg.map(s=>'<li class="plan-item" data-s="'+s+'">📖 '+s+'</li>').join('');
+  el.querySelectorAll('.plan-item').forEach(li=>li.addEventListener('click',()=>openSubject(li.dataset.s)));
+}
+function renderSubjects(st){
+  const p=getPrg(st),studied=new Set((p.quizHistory||[]).map(h=>h.subject));
+  document.getElementById('subjects').innerHTML=allSubs(st).map(s=>'<button class="subject-card '+(studied.has(s)?'done':'')+'" data-s="'+s+'"><span class="sicon">'+(ICONS[s]||'📚')+'</span><h3>'+s+'</h3><p>'+allTests(st,s).length+' tests</p>'+(studied.has(s)?'<span class="done-badge">✓</span>':'')+'</button>').join('');
+  document.getElementById('subjects').querySelectorAll('.subject-card').forEach(b=>b.addEventListener('click',()=>openSubject(b.dataset.s)));
+}
+
+// TEST LIST
+function openSubject(subject){
+  S.subject=subject;
+  document.getElementById('tlSubject').textContent=subject;
+  document.getElementById('tlStudent').textContent=S.student==='santiago'?'Santiago':'Benjamín';
+  const p=getPrg(S.student);
+  _cache=allTests(S.student,subject);
+  const isRemote=sub=>!!(getRemote(S.student)[sub]);
+  document.getElementById('testCards').innerHTML=_cache.length===0?'<p class="empty-state">Sin tests aún en esta materia.</p>':_cache.map((q,i)=>{
+    const hist=(p.quizHistory||[]).filter(h=>h.quizId===qid(S.student,subject,q.title));
+    const best=hist.length?Math.max(...hist.map(h=>h.score)):null;
+    const openC=q.questions.filter(x=>x.type==='open').length;
+    const mcC=q.questions.filter(x=>x.type==='mc'||!x.type).length;
+    const pill=openC>0&&mcC>0?'🔀 Mixto':openC>0?'📝 Desarrollo':'⚡ Selección';
+    const ai=!(BUILTIN[S.student]?.[subject]?.some(b=>b.title===q.title));
+    return '<button class="test-card" data-i="'+i+'"><h3>'+q.title+(ai?'<span class="ai-badge">✨ IA</span>':'')+'</h3><p>'+q.questions.length+' preg. · <span style="color:var(--primary);font-size:.78rem">'+pill+'</span></p>'+(best!==null?'<div class="test-hist"><span>Mejor: '+best+'%</span><span>'+stars(best)+'</span></div>':'<p class="test-new">✦ Nuevo</p>')+'</button>';
+  }).join('');
+  document.getElementById('testCards').querySelectorAll('.test-card').forEach(b=>b.addEventListener('click',()=>startTest(_cache[+b.dataset.i],subject)));
+  go('testList');
+}
+
+// TEST ENGINE
+function startTest(test,subject){
+  S.quiz=test.questions;S.meta={id:qid(S.student,subject,test.title),subject,title:test.title};
+  S.idx=0;S.score=0;S.answers=[];
+  document.getElementById('testTitle').textContent=test.title;
+  document.getElementById('testMeta').textContent=subject+' · '+(S.student==='santiago'?'Santiago':'Benjamín');
+  go('testScreen');renderQ();
+}
+function renderQ(){
+  const q=S.quiz[S.idx],isOpen=q.type==='open';
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qCounter').textContent='Pregunta '+(S.idx+1)+' de '+S.quiz.length;
+  document.getElementById('progBar').style.width=(S.idx/S.quiz.length*100)+'%';
+  document.getElementById('qFeedback').className='feedback hidden';
+  const badge=document.getElementById('qBadge');
+  badge.textContent=isOpen?'📝 Desarrollo':'⚡ Selección múltiple';
+  badge.className='q-badge '+(isOpen?'open':'mc');
+  const opts=document.getElementById('qOptions');opts.innerHTML='';
+  const actions=document.getElementById('qActions');
+  if(isOpen){
+    const ta=document.createElement('textarea');ta.className='open-ans';ta.placeholder='Escribe tu respuesta aquí…';ta.rows=5;opts.appendChild(ta);
+    actions.innerHTML='<button id="showAnsBtn" class="primary-btn">📖 Ver respuesta modelo</button>';
+    document.getElementById('showAnsBtn').addEventListener('click',()=>{
+      const fb=document.getElementById('qFeedback');
+      fb.className='feedback reveal';
+      fb.innerHTML='<strong>Respuesta esperada:</strong><br>'+q.answer+'<br><small style="color:var(--muted)">💡 '+q.hint+'</small>';
+      actions.innerHTML='<button id="selfY" class="self-btn self-yes">✅ Lo supe</button><button id="selfN" class="self-btn self-no">❌ No lo supe</button>';
+      ta.disabled=true;playSound('correct');
+      document.getElementById('selfY').addEventListener('click',()=>recOpen(true,ta.value,q));
+      document.getElementById('selfN').addEventListener('click',()=>recOpen(false,ta.value,q));
+    });
+  } else {
+    actions.innerHTML='<button id="hintBtn" class="secondary-btn" style="flex:1">💡 Pista</button><button id="nextBtn" class="primary-btn" style="flex:2" disabled>Siguiente →</button>';
+    document.getElementById('hintBtn').addEventListener('click',()=>{const fb=document.getElementById('qFeedback');fb.className='feedback hint';fb.innerHTML='💡 '+q.hint;});
+    document.getElementById('nextBtn').addEventListener('click',advance);
+    q.options.forEach(opt=>{const b=document.createElement('button');b.className='opt-btn';b.textContent=opt;b.addEventListener('click',()=>selAns(b,opt,q.answer,q.hint));opts.appendChild(b);});
+  }
+}
+function selAns(btn,sel,correct,hint){
+  document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+  const ok=sel===correct;
+  if(ok){btn.classList.add('correct');S.score++;playSound('correct');}
+  else{btn.classList.add('wrong');document.querySelectorAll('.opt-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});playSound('wrong');}
+  S.answers.push({type:'mc',q:S.quiz[S.idx].q,sel,correct,ok});
+  const fb=document.getElementById('qFeedback');
+  fb.className='feedback '+(ok?'good':'bad');
+  fb.innerHTML=ok?'✅ ¡Correcto!':'❌ Correcto: <strong>'+correct+'</strong><br><small>💡 '+hint+'</small>';
+  document.getElementById('nextBtn').disabled=false;
+}
+function recOpen(selfOk,studentAnswer,q){
+  if(selfOk)S.score++;
+  S.answers.push({type:'open',q:q.q,answer:studentAnswer,modelAnswer:q.answer,ok:selfOk});
+  saveAnswer(S.student,S.meta.title,q.q,studentAnswer,q.answer,selfOk);
+  playSound(selfOk?'correct':'wrong');
+  advance();
+}
+function advance(){S.idx++;if(S.idx<S.quiz.length)renderQ();else showResults();}
+function showResults(){
+  const pct=Math.round(S.score/S.quiz.length*100);
+  const[title,msg]=pct===100?['🏆 ¡Perfecto!','¡Dominas el tema!']:pct>=80?['🌟 ¡Muy bien!','Sigue así.']:pct>=60?['👍 ¡Bien!','Hay espacio para mejorar.']:['📚 Sigue practicando','Repasa y vuelve a intentarlo.'];
+  document.getElementById('resTitle').textContent=title;
+  document.getElementById('resCircle').textContent=pct+'%';
+  document.getElementById('resCircle').style.background=pct>=80?'var(--success)':pct>=60?'var(--warning)':'var(--danger)';
+  document.getElementById('resMsg').textContent=msg+' ('+S.score+'/'+S.quiz.length+' correctas)';
+  document.getElementById('resStars').innerHTML='<div class="stars-earned">'+stars(pct)+' ('+Math.ceil(pct/20)+'/5 estrellas)</div>';
+  document.getElementById('resReview').innerHTML=S.answers.map(a=>
+    a.type==='open'?'<div class="rev-item '+(a.ok?'ok':'no')+'"><span>'+(a.ok?'✅':'❌')+'</span><div><strong>'+a.q+'</strong><br><span class="rev-ans">Tu respuesta: '+a.answer+'</span><br><span class="rev-ans">Esperada: '+a.modelAnswer+'</span></div></div>'
+    :'<div class="rev-item '+(a.ok?'ok':'no')+'"><span>'+(a.ok?'✅':'❌')+'</span><div><strong>'+a.q+'</strong>'+(a.ok?'':'<br><span class="rev-ans">'+a.sel+' → '+a.correct+'</span>')+'</div></div>'
+  ).join('');
+  document.getElementById('progBar').style.width='100%';
+  S.lastPct=pct;S.lastOk=S.score;playSound('complete');go('resultScreen');
+}
+document.getElementById('finishBtn').addEventListener('click',()=>{
+  savePrg(S.student,S.meta,S.lastPct,S.lastOk,S.quiz.length);
+  renderDash();go('dashboard');
+});
+
+// ADMIN
+function showAdmin(){
+  document.getElementById('pinGate').classList.remove('hidden');
+  document.getElementById('adminContent').classList.add('hidden');
+  document.getElementById('pinInput').value='';
+  document.getElementById('pinErr').classList.add('hidden');
+  renderAdminTests();renderExport();
+  go('adminScreen');
+}
+document.getElementById('pinBtn').addEventListener('click',()=>{
+  if(document.getElementById('pinInput').value===getSettings().pin){
+    document.getElementById('pinGate').classList.add('hidden');
+    document.getElementById('adminContent').classList.remove('hidden');
+  }else{document.getElementById('pinErr').classList.remove('hidden');document.getElementById('pinInput').value='';}
+});
+document.getElementById('pinInput').addEventListener('keypress',e=>{if(e.key==='Enter')document.getElementById('pinBtn').click();});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(!confirm('⚠️ ¿Borrar TODO el progreso y respuestas guardadas?'))return;
+  ['prg_santiago','prg_benjamin','answers_santiago','answers_benjamin'].forEach(k=>localStorage.removeItem(k));
+  renderHome();alert('✅ Progreso borrado.');
+});
+document.getElementById('copyAnswers').addEventListener('click',()=>{
+  const txt=document.getElementById('answersExport').textContent;
+  navigator.clipboard.writeText(txt).then(()=>alert('✅ Copiado al portapapeles')).catch(()=>{document.getElementById('answersExport').select();document.execCommand('copy');});
+});
+function renderAdminTests(){
+  const list=document.getElementById('adminTests');let html='';
+  ['santiago','benjamin'].forEach(st=>{
+    const r=getRemote(st),subs=Object.keys(r);if(!subs.length)return;
+    html+='<div class="custom-student"><strong>'+(st==='santiago'?'🚀 Santiago':'🦊 Benjamín')+'</strong>';
+    subs.forEach(sub=>r[sub].forEach(q=>{html+='<div class="custom-quiz-item"><span>'+sub+' — '+q.title+' ('+q.questions.length+'q)</span></div>';}));
+    html+='</div>';
+  });
+  list.innerHTML=html||'<p class="empty-state">Aún no hay tests agregados por IA.</p>';
+}
+function renderExport(){
+  const all=getAllAnswers();
+  if(!Object.keys(all).length){document.getElementById('answersExport').textContent='Sin respuestas guardadas aún.';return;}
+  let txt='=== RESPUESTAS PARA EVALUAR ===\n\n';
+  Object.entries(all).forEach(([name,answers])=>{
+    txt+=`## ${name}\n\n`;
+    answers.slice(-10).forEach(a=>{
+      txt+=`Test: ${a.test}\nFecha: ${a.date}\nPregunta: ${a.question}\nRespuesta del alumno: ${a.answer}\nRespuesta esperada: ${a.modelAnswer}\nAutoevaluación: ${a.ok?'Lo supo':'No lo supo'}\n\n`;
+    });
+  });
+  document.getElementById('answersExport').textContent=txt;
+}
+
+// GLOBAL LISTENERS
+document.querySelectorAll('.profile-card').forEach(b=>b.addEventListener('click',()=>{S.student=b.dataset.student;renderDash();go('dashboard');}));
+document.getElementById('backHome').addEventListener('click',()=>{renderHome();go('home');});
+document.getElementById('backDash').addEventListener('click',()=>go('dashboard'));
+document.getElementById('exitTest').addEventListener('click',()=>go('testList'));
+document.getElementById('backAdmin').addEventListener('click',()=>{if(S.student){renderDash();go('dashboard');}else{renderHome();go('home');}});
+document.getElementById('adminBtn').addEventListener('click',showAdmin);
+document.getElementById('dashAdmin').addEventListener('click',showAdmin);
+document.getElementById('themeToggle').addEventListener('click',()=>{const c=getSettings().theme;setSetting('theme',c==='dark'?'light':'dark');applyTheme();});
+document.getElementById('soundToggle').addEventListener('click',()=>{const c=getSettings().sound;setSetting('sound',!c);document.getElementById('soundToggle').textContent=c?'🔇 Sonido: OFF':'🔊 Sonido: ON';});
+
+// INIT
+applyTheme();
+document.getElementById('soundToggle').textContent=getSettings().sound?'🔊 Sonido: ON':'🔇 Sonido: OFF';
+renderHome();
+loadRemote().then(()=>renderHome()).catch(()=>{});
+</script>
 </body>
 </html>
