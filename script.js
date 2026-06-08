@@ -3,6 +3,9 @@
    Novedades: preguntas de desarrollo, más preguntas, retry
    ============================================================ */
 
+// Modelo base — Haiku es el más eficiente en tokens
+const MODEL = 'claude-haiku-4-5-20251001';
+
 // ── 1. DATOS BASE ────────────────────────────────────────────
 const BUILTIN = {
   santiago: {
@@ -489,7 +492,7 @@ async function generateQuizFromPdf(apiKey, file, grade, numQ, tipo) {
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({
-      model:'claude-sonnet-4-6', max_tokens:8000,
+      model:MODEL, max_tokens:8000,
       messages:[{role:'user',content:[
         {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
         {type:'text',text:buildPrompt(grade,numQ,tipo)}
