@@ -175,8 +175,17 @@
           </div>
           <div class="form-group">
             <label>Material de estudio</label>
+            <!-- CARGA DE PDF -->
+            <div class="pdf-drop-zone" id="pdfDropZone">
+              <input type="file" id="pdfFileInput" accept=".pdf" style="display:none"/>
+              <button type="button" id="pdfBtn" class="secondary-btn pdf-upload-btn">
+                📄 Cargar PDF del colegio
+              </button>
+              <p class="pdf-hint">o arrastra el PDF aquí · también puedes pegar texto directamente abajo</p>
+              <div id="pdfStatus" class="pdf-status hidden"></div>
+            </div>
             <textarea id="adminMaterial"
-              placeholder="Pega aquí el texto, apuntes o contenido del libro. Cuanto más detallado, mejores preguntas generará la IA..."></textarea>
+              placeholder="El texto del PDF aparecerá aquí automáticamente, o pégalo tú mismo..."></textarea>
           </div>
           <button id="generateAIBtn" class="primary-btn ai-btn">✨ Generar quiz con IA</button>
           <div id="aiLoading" class="ai-loading hidden">
@@ -218,6 +227,7 @@
   </section>
 
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
