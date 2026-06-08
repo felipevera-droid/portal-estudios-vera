@@ -392,6 +392,10 @@ function showAdmin() {
   const key=getApiKey();
   document.getElementById('apiKeyStatus').textContent=key?'✅ API Key guardada':'';
   document.getElementById('apiKeyInput').placeholder=key?'sk-ant-… (ya configurada)':'sk-ant-api03-…';
+  const ghToken=getGhToken();
+  document.getElementById('ghTokenStatus').textContent=ghToken?'✅ Token configurado — sincronización activa':'';
+  document.getElementById('ghTokenStatus').style.color='var(--success)';
+  document.getElementById('ghTokenInput').placeholder=ghToken?'ghp_… (ya configurado)':'GitHub Token (ghp_…)';
   renderCustomQuizList();
   showScreen('adminScreen');
 }
@@ -693,20 +697,22 @@ document.getElementById('themeToggle').addEventListener('click',()=>{const c=get
 document.getElementById('soundToggle').addEventListener('click',()=>{const c=getSettings().sound;setSetting('sound',!c);document.getElementById('soundToggle').textContent=c?'🔇 Sonido: OFF':'🔊 Sonido: ON';});
 
 // ── 16. INIT ─────────────────────────────────────────────────
-(async function init(){
-  applyTheme();
-  document.getElementById('soundToggle').textContent=getSettings().sound?'🔊 Sonido: ON':'🔇 Sonido: OFF';
-  // Cargar tests remotos (con timeout de 4s para no bloquear si hay red lenta)
-  try { await Promise.race([loadRemoteData(), sleep(4000)]); } catch(e) {}
-  renderHome();
 
-  // GitHub token admin listeners
-  document.getElementById('saveGhToken').addEventListener('click',()=>{
-    const t=document.getElementById('ghTokenInput').value.trim(); if(!t)return;
-    setGhToken(t);
-    document.getElementById('ghTokenStatus').textContent='✅ Token guardado — la sincronización está activa';
-    document.getElementById('ghTokenStatus').style.color='var(--success)';
-    document.getElementById('ghTokenInput').value='';
-    document.getElementById('ghTokenInput').placeholder='ghp_… (ya configurado)';
-  });
+// GitHub token — listener en scope global (no async, siempre disponible)
+document.getElementById('saveGhToken').addEventListener('click', () => {
+  const t = document.getElementById('ghTokenInput').value.trim();
+  if (!t) return;
+  setGhToken(t);
+  document.getElementById('ghTokenStatus').textContent = '✅ Token guardado — sincronización activa';
+  document.getElementById('ghTokenStatus').style.color = 'var(--success)';
+  document.getElementById('ghTokenInput').value = '';
+  document.getElementById('ghTokenInput').placeholder = 'ghp_… (ya configurado)';
+});
+
+(function init() {
+  applyTheme();
+  document.getElementById('soundToggle').textContent = getSettings().sound ? '🔊 Sonido: ON' : '🔇 Sonido: OFF';
+  renderHome();
+  // Carga remota en segundo plano — no bloquea la UI
+  loadRemoteData().then(() => renderHome()).catch(() => {});
 })();
