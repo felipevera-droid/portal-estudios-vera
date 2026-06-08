@@ -558,7 +558,7 @@ document.getElementById('generateBtn').addEventListener('click',async()=>{
   const student=document.getElementById('adminStudent').value;
   const numQ=parseInt(document.getElementById('adminNumQ').value);
   const tipo=document.getElementById('adminQType').value;
-  const grade=student==='santiago'?'4° básico (10 años)':'3° básico (9 años)';
+  const grade=student==='santiago'?'4° básico':'3° básico';
   const msgEl=document.getElementById('genMsg'), statusEl=document.getElementById('genStatus'), resultEl=document.getElementById('genResult');
   const updateMsg=t=>{ msgEl.textContent=t; };
   statusEl.classList.remove('hidden'); resultEl.classList.add('hidden');
