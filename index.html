@@ -131,7 +131,13 @@ a{color:var(--primary);text-decoration:none}
 .custom-student>strong{display:block;margin-bottom:6px;font-size:.9rem}
 .custom-quiz-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--s2);border-radius:var(--rs);margin-bottom:4px;font-size:.82rem}
 .export-answers{background:var(--surface);border:2px solid var(--primary);border-radius:var(--rs);padding:12px;margin-bottom:8px;font-size:.82rem;color:var(--muted);max-height:200px;overflow-y:auto;white-space:pre-wrap;font-family:monospace}
-.danger-zone{border-color:#fca5a5!important}
+.ai-eval{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid #7dd3fc;border-radius:var(--r);padding:16px;margin-top:12px;line-height:1.7;font-size:.9rem}
+.ai-eval strong{color:#0369a1}
+.ai-eval-loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.88rem;margin-top:12px;padding:10px}
+[data-theme=dark] .ai-eval{background:linear-gradient(135deg,#0c2340,#0f3460);border-color:#0ea5e9}
+[data-theme=dark] .ai-eval strong{color:#38bdf8}
+.spinner{width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 .danger-zone h3{color:var(--danger)}
 .error-msg{color:var(--danger);font-size:.83rem;margin-top:8px}
 .empty-state{color:var(--muted);font-size:.88rem;padding:12px;text-align:center}
@@ -262,6 +268,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)
         🤖 Para agregar tests, sube los PDFs del colegio al <strong>chat de Claude</strong>. Él los genera y los publica aquí automáticamente.
       </div>
       <div class="admin-sec">
+        <h3>🔑 API Key de Anthropic</h3>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:8px">Necesaria para que Claude evalúe las respuestas de desarrollo. Se configura una vez por dispositivo.</p>
+        <div style="display:flex;gap:8px">
+          <input id="apiKeyInput" type="password" placeholder="sk-ant-api03-…" style="flex:1"/>
+          <button id="apiKeySave" class="secondary-btn" style="white-space:nowrap">Guardar</button>
+        </div>
+        <p id="apiKeyStatus" style="font-size:.8rem;margin-top:6px;color:var(--success)"></p>
+      </div>
+      <div class="admin-sec">
         <h3>🗂️ Tests publicados</h3>
         <div id="adminTests"></div>
       </div>
@@ -363,6 +378,37 @@ function getRemote(st){const r=localStorage.getItem('remote');return r?JSON.pars
 function setRemote(d){localStorage.setItem('remote',JSON.stringify(d));}
 function getSettings(){return JSON.parse(localStorage.getItem('cfg')||'{"theme":"light","sound":true,"pin":"1234"}');}
 function setSetting(k,v){const s=getSettings();s[k]=v;localStorage.setItem('cfg',JSON.stringify(s));}
+function getApiKey(){return localStorage.getItem('api_key')||'';}
+function setApiKey(k){localStorage.setItem('api_key',k);}
+
+// Evaluar respuesta de desarrollo con Claude Haiku
+async function evaluateAnswer(question,modelAnswer,studentAnswer){
+  const key=getApiKey();
+  if(!key||!studentAnswer.trim())return null;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',max_tokens:600,
+        messages:[{role:'user',content:`Eres un tutor escolar chileno amable y pedagógico. Evalúa la respuesta de un estudiante de básica.
+
+PREGUNTA: ${question}
+RESPUESTA ESPERADA: ${modelAnswer}
+RESPUESTA DEL ESTUDIANTE: ${studentAnswer}
+
+Responde en español con este formato exacto (3 secciones cortas):
+✅ **Lo que expresaste bien:** [1-2 oraciones sobre lo que estuvo correcto]
+⚠️ **Lo que faltó o mejorar:** [1-2 oraciones sobre imprecisiones o lo que le faltó, si aplica]
+💡 **Para recordar:** [1-2 oraciones explicando el concepto clave de forma simple y memorable]
+
+Habla directamente al estudiante (de tú). Sé alentador aunque la respuesta esté incompleta.`}]
+      })
+    });
+    const d=await r.json();
+    return d.content?.[0]?.text||null;
+  }catch(e){return null;}
+}
 
 // Guardar respuestas de desarrollo para exportar
 function saveAnswer(st,testTitle,question,answer,modelAnswer,ok){
@@ -500,12 +546,29 @@ function renderQ(){
   if(isOpen){
     const ta=document.createElement('textarea');ta.className='open-ans';ta.placeholder='Escribe tu respuesta aquí…';ta.rows=5;opts.appendChild(ta);
     actions.innerHTML='<button id="showAnsBtn" class="primary-btn">📖 Ver respuesta modelo</button>';
-    document.getElementById('showAnsBtn').addEventListener('click',()=>{
+    document.getElementById('showAnsBtn').addEventListener('click',async()=>{
       const fb=document.getElementById('qFeedback');
       fb.className='feedback reveal';
       fb.innerHTML='<strong>Respuesta esperada:</strong><br>'+q.answer+'<br><small style="color:var(--muted)">💡 '+q.hint+'</small>';
-      actions.innerHTML='<button id="selfY" class="self-btn self-yes">✅ Lo supe</button><button id="selfN" class="self-btn self-no">❌ No lo supe</button>';
       ta.disabled=true;playSound('correct');
+
+      // Evaluación IA inline
+      if(getApiKey()&&ta.value.trim()){
+        const loadEl=document.createElement('div');
+        loadEl.className='ai-eval-loading';
+        loadEl.innerHTML='<div class="spinner"></div><span>Claude está evaluando tu respuesta…</span>';
+        fb.appendChild(loadEl);
+        const evalText=await evaluateAnswer(q.q,q.answer,ta.value);
+        loadEl.remove();
+        if(evalText){
+          const evalEl=document.createElement('div');
+          evalEl.className='ai-eval';
+          evalEl.innerHTML='<strong>🤖 Feedback de Claude:</strong><br>'+evalText.replace(/\n/g,'<br>');
+          fb.appendChild(evalEl);
+        }
+      }
+
+      actions.innerHTML='<button id="selfY" class="self-btn self-yes">✅ Lo supe</button><button id="selfN" class="self-btn self-no">❌ No lo supe</button>';
       document.getElementById('selfY').addEventListener('click',()=>recOpen(true,ta.value,q));
       document.getElementById('selfN').addEventListener('click',()=>recOpen(false,ta.value,q));
     });
@@ -561,9 +624,19 @@ function showAdmin(){
   document.getElementById('adminContent').classList.add('hidden');
   document.getElementById('pinInput').value='';
   document.getElementById('pinErr').classList.add('hidden');
+  const k=getApiKey();
+  document.getElementById('apiKeyStatus').textContent=k?'✅ API Key configurada — evaluación IA activa':'';
+  document.getElementById('apiKeyInput').placeholder=k?'sk-ant-… (ya configurada)':'sk-ant-api03-…';
   renderAdminTests();renderExport();
   go('adminScreen');
 }
+document.getElementById('apiKeySave').addEventListener('click',()=>{
+  const k=document.getElementById('apiKeyInput').value.trim();if(!k)return;
+  setApiKey(k);
+  document.getElementById('apiKeyStatus').textContent='✅ API Key configurada — evaluación IA activa';
+  document.getElementById('apiKeyInput').value='';
+  document.getElementById('apiKeyInput').placeholder='sk-ant-… (ya configurada)';
+});
 document.getElementById('pinBtn').addEventListener('click',()=>{
   if(document.getElementById('pinInput').value===getSettings().pin){
     document.getElementById('pinGate').classList.add('hidden');
