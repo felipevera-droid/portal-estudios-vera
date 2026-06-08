@@ -439,3 +439,12 @@ a:hover { text-decoration: underline; }
 .sync-section { border-color: #bfdbfe !important; }
 .sync-section h3 { color: #1d4ed8; }
 .sync-status { padding:8px 12px; border-radius:var(--radius-sm); font-size:.82rem; background:var(--surface-2); margin-top:8px; }
+
+/* === ADMIN INFO BANNER (v3.0) === */
+.admin-info {
+  background: linear-gradient(135deg,#ede9fe,#fce7f3);
+  border-radius: var(--radius); padding: 16px 18px;
+  font-size: .9rem; line-height: 1.6; margin-bottom: 14px;
+  border: 1px solid #ddd6fe;
+}
+[data-theme="dark"] .admin-info { background: linear-gradient(135deg,#1e1b4b,#2d1b2e); border-color: #4c1d95; }
