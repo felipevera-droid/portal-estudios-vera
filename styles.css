@@ -377,3 +377,13 @@ a:hover { text-decoration: underline; }
   border-radius: var(--radius-sm); color: var(--muted);
   text-align: left; line-height: 1.5;
 }
+
+/* === IMPORT DROP ZONE === */
+.import-section { border-color: #bfdbfe !important; background: linear-gradient(135deg,rgba(99,102,241,.04),rgba(236,72,153,.04)); }
+.import-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px; text-align: center;
+  transition: all var(--transition); background: var(--surface-2);
+}
+.import-drop-zone.drag-over { border-color: var(--primary); background: rgba(99,102,241,.07); }
