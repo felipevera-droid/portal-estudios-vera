@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portal de Estudios Vera</title>
+  <title>📚 Portal de Estudios Vera</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 <main class="app-shell">
 
-  <!-- PANTALLA: HOME -->
+  <!-- HOME -->
   <section id="home" class="screen active">
     <div class="hero">
       <p class="eyebrow">Portal familiar</p>
       <h1>📚 Portal de Estudios Vera</h1>
-      <p class="subtitle">Elige tu perfil, entra a una materia y practica con quizzes interactivos.</p>
+      <p class="subtitle">Elige tu perfil, entra a una materia y practica.</p>
       <div class="home-tools">
         <button id="themeToggle" class="ghost-btn">🌙 Modo oscuro</button>
         <button id="soundToggle" class="ghost-btn">🔊 Sonido: ON</button>
@@ -35,13 +35,9 @@
         <div class="profile-stats" id="homeStatsBenjamin"></div>
       </button>
     </div>
-    <div class="parent-note">
-      <strong>Para Felipe:</strong> el progreso se guarda en este navegador.
-      Usa ⚙️ Admin para agregar quizzes con IA o gestionar contenido.
-    </div>
   </section>
 
-  <!-- PANTALLA: DASHBOARD -->
+  <!-- DASHBOARD -->
   <section id="dashboard" class="screen">
     <nav class="topbar">
       <button id="backHome" class="ghost-btn">← Perfil</button>
@@ -74,11 +70,11 @@
         <ul id="studyPlan" class="study-plan"></ul>
       </section>
     </div>
-    <h3 class="section-title">Materias disponibles</h3>
+    <h3 class="section-title">Materias</h3>
     <div id="subjectGrid" class="subject-grid"></div>
   </section>
 
-  <!-- PANTALLA: LISTA DE QUIZZES -->
+  <!-- QUIZ LIST -->
   <section id="quizList" class="screen">
     <nav class="topbar">
       <button id="backDashboard" class="ghost-btn">← Volver</button>
@@ -90,7 +86,7 @@
     <div id="quizCards" class="quiz-grid"></div>
   </section>
 
-  <!-- PANTALLA: QUIZ -->
+  <!-- QUIZ -->
   <section id="quizScreen" class="screen">
     <nav class="topbar">
       <button id="exitQuiz" class="ghost-btn">← Salir</button>
@@ -112,7 +108,7 @@
     </div>
   </section>
 
-  <!-- PANTALLA: RESULTADOS -->
+  <!-- RESULTADOS -->
   <section id="resultScreen" class="screen">
     <div class="result-card">
       <p class="eyebrow">Resultado final</p>
@@ -125,7 +121,7 @@
     </div>
   </section>
 
-  <!-- PANTALLA: ADMIN -->
+  <!-- ADMIN -->
   <section id="adminScreen" class="screen">
     <nav class="topbar">
       <button id="backFromAdmin" class="ghost-btn">← Volver</button>
@@ -136,7 +132,7 @@
     </nav>
     <div class="admin-panel">
 
-      <!-- PIN GATE -->
+      <!-- PIN -->
       <div id="pinGate" class="pin-gate">
         <h3>🔐 Acceso admin</h3>
         <p class="pin-note">PIN predeterminado: <strong>1234</strong></p>
@@ -145,11 +141,12 @@
         <p id="pinError" class="error-msg hidden">❌ PIN incorrecto</p>
       </div>
 
-      <!-- CONTENIDO ADMIN (oculto hasta PIN correcto) -->
       <div id="adminContent" class="hidden">
 
+        <!-- GENERAR DESDE PDF(s) -->
         <div class="admin-section">
-          <h3>✨ Generar quiz con IA (Claude)</h3>
+          <h3>✨ Generar quizzes desde PDF</h3>
+
           <div class="form-group">
             <label>Estudiante</label>
             <select id="adminStudent">
@@ -159,14 +156,10 @@
           </div>
           <div class="form-group">
             <label>Materia</label>
-            <input id="adminSubject" placeholder="Ej: Ciencias, Historia, Lenguaje..."/>
+            <input id="adminSubject" placeholder="Ciencias, Historia, Lenguaje…"/>
           </div>
           <div class="form-group">
-            <label>Título del quiz</label>
-            <input id="adminQuizTitle" placeholder="Ej: Los volcanes de Chile"/>
-          </div>
-          <div class="form-group">
-            <label>Número de preguntas</label>
+            <label>Preguntas por quiz</label>
             <select id="adminNumQ">
               <option value="5">5 preguntas</option>
               <option value="8">8 preguntas</option>
@@ -174,58 +167,33 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Material de estudio</label>
-            <!-- CARGA DE PDF -->
-            <div class="pdf-drop-zone" id="pdfDropZone">
-              <input type="file" id="pdfFileInput" accept=".pdf" style="display:none"/>
-              <button type="button" id="pdfBtn" class="secondary-btn pdf-upload-btn">
-                📄 Cargar PDF del colegio
-              </button>
-              <p class="pdf-hint">o arrastra el PDF aquí · también puedes pegar texto directamente abajo</p>
-              <div id="pdfStatus" class="pdf-status hidden"></div>
+            <label>PDFs del colegio <span class="label-hint">(puedes subir varios a la vez)</span></label>
+            <div class="pdf-zone" id="pdfZone">
+              <input type="file" id="pdfInput" accept=".pdf" multiple style="display:none"/>
+              <button type="button" id="pdfPickBtn" class="secondary-btn">📄 Seleccionar PDF(s)</button>
+              <p class="pdf-hint">o arrastra uno o varios archivos aquí</p>
             </div>
-            <textarea id="adminMaterial"
-              placeholder="El texto del PDF aparecerá aquí automáticamente, o pégalo tú mismo..."></textarea>
+            <div id="pdfList"></div>
           </div>
-          <button id="generateAIBtn" class="primary-btn ai-btn">✨ Generar quiz con IA</button>
-          <div id="aiLoading" class="ai-loading hidden">
+
+          <button id="generateBtn" class="primary-btn ai-btn" disabled>✨ Generar quizzes con IA</button>
+          <div id="genStatus" class="ai-loading hidden">
             <div class="spinner"></div>
-            <span>Generando preguntas con Claude AI…</span>
+            <span id="genMsg">Procesando…</span>
           </div>
+          <div id="genResult" class="gen-result hidden"></div>
         </div>
 
-        <div id="adminPreview" class="admin-preview hidden">
-          <h3>✅ Preguntas generadas — revisa antes de guardar</h3>
-          <div id="previewContent"></div>
-          <button id="saveQuizBtn" class="primary-btn" style="margin-top:12px">💾 Guardar quiz</button>
-        </div>
-
-        <!-- IMPORTAR JSON (generado desde Claude chat) -->
-        <div class="admin-section import-section">
-          <h3>📥 Importar quizzes desde Claude</h3>
-          <p class="hint-text">
-            Sube los PDFs en el chat de Claude → él genera el archivo → lo importas aquí.
-          </p>
-          <div class="import-drop-zone" id="importDropZone">
-            <input type="file" id="jsonImportInput" accept=".json" style="display:none"/>
-            <button type="button" id="jsonImportBtn" class="secondary-btn" style="width:auto">
-              📂 Seleccionar archivo de quizzes (.json)
-            </button>
-            <p class="pdf-hint">o arrastra el archivo aquí</p>
-            <div id="importStatus" class="pdf-status hidden"></div>
-          </div>
-        </div>
-
+        <!-- QUIZZES GUARDADOS -->
         <div class="admin-section">
           <h3>🗂️ Quizzes guardados con IA</h3>
           <div id="customQuizList"></div>
         </div>
 
+        <!-- API KEY -->
         <div class="admin-section">
           <h3>🔑 API Key de Anthropic</h3>
-          <p class="hint-text">Necesaria para generar quizzes.
-            <a href="https://console.anthropic.com" target="_blank">Obtén tu key aquí →</a>
-          </p>
+          <p class="hint-text"><a href="https://console.anthropic.com" target="_blank">Obtén tu key aquí →</a></p>
           <div class="api-key-row">
             <input id="apiKeyInput" type="password" placeholder="sk-ant-api03-…"/>
             <button id="saveApiKey" class="secondary-btn">Guardar</button>
@@ -233,17 +201,17 @@
           <p id="apiKeyStatus" style="font-size:.8rem;margin-top:6px;color:var(--success)"></p>
         </div>
 
+        <!-- PELIGRO -->
         <div class="admin-section danger-zone">
           <h3>⚠️ Zona peligrosa</h3>
           <button id="resetProgress" class="danger-btn">🗑️ Borrar todo el progreso</button>
         </div>
 
-      </div><!-- /adminContent -->
+      </div>
     </div>
   </section>
 
 </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
