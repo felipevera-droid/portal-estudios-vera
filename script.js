@@ -1,5 +1,6 @@
 /* ============================================================
-   PORTAL DE ESTUDIOS VERA — script.js v2.1 (clean)
+   PORTAL DE ESTUDIOS VERA — script.js v2.2
+   Novedades: preguntas de desarrollo, más preguntas, retry
    ============================================================ */
 
 // ── 1. DATOS BASE ────────────────────────────────────────────
@@ -7,55 +8,52 @@ const BUILTIN = {
   santiago: {
     'Matemáticas': [
       { title:'Multiplicaciones rápidas', questions:[
-        {q:'7 × 8',  options:['54','56','48','64'], answer:'56', hint:'7 grupos de 8.'},
-        {q:'9 × 6',  options:['56','48','54','42'], answer:'54', hint:'9 veces 6.'},
-        {q:'12 × 4', options:['44','48','52','42'], answer:'48', hint:'4 grupos de 12.'},
-        {q:'15 × 3', options:['30','45','60','35'], answer:'45', hint:'3 grupos de 15.'},
-        {q:'11 × 7', options:['77','66','88','70'], answer:'77', hint:'11 veces 7.'}
+        {type:'mc',q:'7 × 8',  options:['54','56','48','64'], answer:'56', hint:'7 grupos de 8.'},
+        {type:'mc',q:'9 × 6',  options:['56','48','54','42'], answer:'54', hint:'9 veces 6.'},
+        {type:'mc',q:'12 × 4', options:['44','48','52','42'], answer:'48', hint:'4 grupos de 12.'},
+        {type:'mc',q:'15 × 3', options:['30','45','60','35'], answer:'45', hint:'3 grupos de 15.'},
+        {type:'open',q:'Explica con tus palabras qué es una fracción y da un ejemplo.', answer:'Una fracción representa una parte de un entero. Por ejemplo, 1/2 es la mitad de algo.', hint:'Piensa en una pizza dividida en partes iguales.'}
       ]},
       { title:'Fracciones básicas', questions:[
-        {q:'¿Cuál fracción es la mitad?', options:['1/2','1/3','2/5','3/4'], answer:'1/2', hint:'Dividir en dos partes iguales.'},
-        {q:'2/4 equivale a:', options:['1/2','1/3','3/4','2/3'], answer:'1/2', hint:'Simplifica dividiendo entre 2.'},
-        {q:'3/6 simplificado es:', options:['1/2','1/3','2/3','3/4'], answer:'1/2', hint:'Divide ambos entre 3.'}
+        {type:'mc',q:'¿Cuál fracción es la mitad?', options:['1/2','1/3','2/5','3/4'], answer:'1/2', hint:'Dividir en dos partes iguales.'},
+        {type:'mc',q:'2/4 equivale a:', options:['1/2','1/3','3/4','2/3'], answer:'1/2', hint:'Simplifica dividiendo entre 2.'},
+        {type:'open',q:'¿Por qué 2/4 y 1/2 son equivalentes? Explícalo.', answer:'Porque representan la misma cantidad: la mitad. 2/4 simplificado (÷2) da 1/2.', hint:'Piensa en dividir algo en partes iguales.'}
       ]}
     ],
     'Historia': [
       { title:'Chile y sus regiones', questions:[
-        {q:'¿Capital de Chile?', options:['Valparaíso','Concepción','Santiago','Temuco'], answer:'Santiago', hint:'Donde está La Moneda.'},
-        {q:'¿Cuántas regiones tiene Chile?', options:['12','14','16','18'], answer:'16', hint:'Más de 15.'},
-        {q:'¿Región más austral?', options:['Los Lagos','Aysén','Magallanes','Biobío'], answer:'Magallanes', hint:'Cercana a la Antártica.'}
+        {type:'mc',q:'¿Capital de Chile?', options:['Valparaíso','Concepción','Santiago','Temuco'], answer:'Santiago', hint:'Donde está La Moneda.'},
+        {type:'mc',q:'¿Cuántas regiones tiene Chile?', options:['12','14','16','18'], answer:'16', hint:'Más de 15.'},
+        {type:'open',q:'¿Por qué crees que Chile tiene una forma tan larga y angosta? Explica.', answer:'Por su geografía entre la cordillera de los Andes y el Océano Pacífico, que la delimitan naturalmente de norte a sur.', hint:'Piensa en los accidentes geográficos que rodean el país.'}
       ]}
     ],
     'Ciencias': [
       { title:'Sistema solar', questions:[
-        {q:'¿El planeta rojo?', options:['Venus','Marte','Júpiter','Saturno'], answer:'Marte', hint:'Color rojizo.'},
-        {q:'¿La estrella del sistema solar?', options:['La Luna','Marte','El Sol','Venus'], answer:'El Sol', hint:'Nos da luz y calor.'},
-        {q:'¿El planeta con anillos famosos?', options:['Júpiter','Urano','Saturno','Neptuno'], answer:'Saturno', hint:'Sus anillos son de hielo.'}
+        {type:'mc',q:'¿El planeta rojo?', options:['Venus','Marte','Júpiter','Saturno'], answer:'Marte', hint:'Color rojizo.'},
+        {type:'mc',q:'¿La estrella del sistema solar?', options:['La Luna','Marte','El Sol','Venus'], answer:'El Sol', hint:'Nos da luz y calor.'},
+        {type:'open',q:'¿Qué diferencia hay entre un planeta y una estrella? Explica con tus palabras.', answer:'Las estrellas generan su propia luz y energía (como el Sol). Los planetas no generan luz propia, sino que reflejan la de las estrellas.', hint:'Piensa en qué produce el Sol vs qué hace la Tierra.'}
       ]}
     ]
   },
   benjamin: {
     'Matemáticas': [
       { title:'Sumas y restas', questions:[
-        {q:'45 + 27',  options:['62','72','82','70'], answer:'72',  hint:'Suma decenas y unidades.'},
-        {q:'90 - 38',  options:['62','52','58','42'], answer:'52',  hint:'Resta 30 y luego 8.'},
-        {q:'8 × 7',    options:['54','48','56','64'], answer:'56',  hint:'7 grupos de 8.'},
-        {q:'120 + 35', options:['145','155','165','150'], answer:'155', hint:'Suma centenas y decenas.'}
+        {type:'mc',q:'45 + 27',  options:['62','72','82','70'], answer:'72',  hint:'Suma decenas y unidades.'},
+        {type:'mc',q:'90 - 38',  options:['62','52','58','42'], answer:'52',  hint:'Resta 30 y luego 8.'},
+        {type:'mc',q:'8 × 7',    options:['54','48','56','64'], answer:'56',  hint:'7 grupos de 8.'},
+        {type:'open',q:'Si tienes 90 fichas y regalas 38, ¿cuántas te quedan? Explica cómo lo resolviste.', answer:'52 fichas. Puedo restar 90 - 30 = 60, luego 60 - 8 = 52.', hint:'Separa la resta en dos pasos más fáciles.'}
       ]},
       { title:'Geometría básica', questions:[
-        {q:'¿Lados de un triángulo?', options:['2','3','4','5'], answer:'3', hint:'La pista está en el nombre.'},
-        {q:'¿Figura con 4 lados iguales?', options:['Triángulo','Rectángulo','Cuadrado','Círculo'], answer:'Cuadrado', hint:'Como una caja perfecta.'},
-        {q:'¿Lados de un hexágono?', options:['5','6','7','8'], answer:'6', hint:'Hexa = seis en griego.'}
+        {type:'mc',q:'¿Lados de un triángulo?', options:['2','3','4','5'], answer:'3', hint:'La pista está en el nombre.'},
+        {type:'mc',q:'¿Figura con 4 lados iguales?', options:['Triángulo','Rectángulo','Cuadrado','Círculo'], answer:'Cuadrado', hint:'Como una caja perfecta.'},
+        {type:'open',q:'¿Qué diferencia hay entre un cuadrado y un rectángulo? Explica.', answer:'Un cuadrado tiene los 4 lados iguales. Un rectángulo tiene 2 lados largos y 2 cortos, pero todos sus ángulos son de 90°.', hint:'Piensa en las medidas de sus lados.'}
       ]}
     ],
     'Lenguaje': [
       { title:'Sinónimos y antónimos', questions:[
-        {q:'¿Qué es un sinónimo?', options:['Palabra igual','Palabra opuesta','Animal','Número'], answer:'Palabra igual', hint:'Significa parecido.'},
-        {q:'¿Qué es un antónimo?', options:['Palabra parecida','Palabra opuesta','Una oración','Un cuento'], answer:'Palabra opuesta', hint:'Es lo contrario.'}
-      ]},
-      { title:'Ortografía básica', questions:[
-        {q:'¿Cuál está bien escrita?', options:['havion','avión','abión','avíon'], answer:'avión', hint:'Lleva tilde en la ó.'},
-        {q:'¿Cuál está bien escrita?', options:['vaca','baca','vaka','bacca'], answer:'vaca', hint:'Se escribe con V.'}
+        {type:'mc',q:'¿Qué es un sinónimo?', options:['Palabra igual','Palabra opuesta','Animal','Número'], answer:'Palabra igual', hint:'Significa parecido.'},
+        {type:'mc',q:'¿Qué es un antónimo?', options:['Palabra parecida','Palabra opuesta','Una oración','Un cuento'], answer:'Palabra opuesta', hint:'Es lo contrario.'},
+        {type:'open',q:'Escribe un sinónimo y un antónimo para la palabra "rápido".', answer:'Sinónimo: veloz, ágil, ligero. Antónimo: lento, pausado, despacio.', hint:'Piensa en palabras que signifiquen lo mismo y lo contrario.'}
       ]}
     ]
   }
@@ -71,9 +69,9 @@ const BADGES = [
 ];
 
 // ── 2. ESTADO ────────────────────────────────────────────────
-const S = { student:'', quiz:[], quizMeta:{}, qIdx:0, score:0, answers:[], lastPct:0, lastOk:0, subject:'' };
+const S = { student:'', quiz:[], quizMeta:{}, qIdx:0, score:0, totalGradable:0, answers:[], lastPct:0, lastOk:0, subject:'' };
 let _quizCache = [];
-let _pdfs      = [];  // [{file, title}] para el admin
+let _pdfs      = [];
 let audioCtx   = null;
 
 // ── 3. STORAGE ───────────────────────────────────────────────
@@ -84,8 +82,7 @@ function getProgress(st) {
 }
 function saveProgress(st, meta, pct, ok, total) {
   const p = getProgress(st);
-  const td = toDay();
-  const stars = Math.ceil(pct/20);
+  const td = toDay(); const stars = Math.ceil(pct/20);
   if (p.lastStudyDate !== td) {
     const yd = new Date(Date.now()-86400000).toISOString().slice(0,10);
     p.streak = (p.lastStudyDate===yd) ? p.streak+1 : 1;
@@ -95,13 +92,13 @@ function saveProgress(st, meta, pct, ok, total) {
   p.totalCompleted++; p.totalStars+=stars; p.bestScore=Math.max(p.bestScore,pct);
   localStorage.setItem('prg_'+st, JSON.stringify(p));
 }
-function getCustom(st)              { const r=localStorage.getItem('custom'); return r ? JSON.parse(r)[st]||{} : {}; }
-function saveCustom(st,subject,quiz) {
+function getCustom(st)               { const r=localStorage.getItem('custom'); return r?JSON.parse(r)[st]||{}:{}; }
+function saveCustom(st, subject, quiz) {
   const r=localStorage.getItem('custom'); const all=r?JSON.parse(r):{};
   if(!all[st])all[st]={}; if(!all[st][subject])all[st][subject]=[];
   all[st][subject].push(quiz); localStorage.setItem('custom',JSON.stringify(all));
 }
-function deleteCustom(st,subject,title) {
+function deleteCustom(st, subject, title) {
   const r=localStorage.getItem('custom'); if(!r)return;
   const all=JSON.parse(r);
   if(all[st]?.[subject]){ all[st][subject]=all[st][subject].filter(q=>q.title!==title);
@@ -116,8 +113,9 @@ function setApiKey(k)   { localStorage.setItem('api_key',k); }
 
 // ── 4. UTILS ─────────────────────────────────────────────────
 function toDay()         { return new Date().toISOString().slice(0,10); }
+function sleep(ms)       { return new Promise(r=>setTimeout(r,ms)); }
 function allSubjects(st) { return [...new Set([...Object.keys(BUILTIN[st]||{}),...Object.keys(getCustom(st))])]; }
-function allQuizzes(st,s){ return [...(BUILTIN[st]||{})[s]||[], ...getCustom(st)[s]||[]]; }
+function allQuizzes(st,s){ return [...(BUILTIN[st]||{})[s]||[],...getCustom(st)[s]||[]]; }
 function quizId(st,s,t)  { return [st,s,t].join('_').replace(/\s+/g,'_'); }
 function starsHtml(pct)  { const n=Math.min(5,Math.ceil(pct/20)); return '⭐'.repeat(n)+'☆'.repeat(5-n); }
 const ICONS = {'Matemáticas':'🔢','Historia':'📜','Ciencias':'🔬','Lenguaje':'📝','Inglés':'🌎','Arte':'🎨','Música':'🎵'};
@@ -131,8 +129,7 @@ function playSound(type) {
     const notes = type==='correct'?[523,659,784]:type==='wrong'?[300,200]:type==='complete'?[523,659,784,1047]:[];
     notes.forEach((freq,i)=>{
       const o=ctx.createOscillator(),g=ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value=freq;
+      o.connect(g); g.connect(ctx.destination); o.frequency.value=freq;
       const t=ctx.currentTime+i*0.1;
       g.gain.setValueAtTime(0.18,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.3);
       o.start(t); o.stop(t+0.3);
@@ -186,7 +183,7 @@ function renderRanking() {
       <span class="rank-pos">${i===0?'🥇':'🥈'}</span>
       <span>${r.av}</span><span class="rank-name">${r.name}</span>
       <span class="rank-stars">⭐ ${r.p.totalStars}</span>
-      <span class="rank-count">${r.p.totalCompleted} quiz</span>
+      <span class="rank-count">${r.p.totalCompleted} tests</span>
     </div>`).join('');
 }
 
@@ -202,27 +199,24 @@ function renderStudyPlan(st,p) {
   const studied=new Set((p.quizHistory||[]).filter(h=>h.date===toDay()).map(h=>h.subject));
   const sugg=allSubjects(st).filter(s=>!studied.has(s)).slice(0,3);
   const el=document.getElementById('studyPlan');
-  el.innerHTML=sugg.length===0
-    ?'<li class="plan-done">✅ ¡Todo listo por hoy!</li>'
+  el.innerHTML=sugg.length===0?'<li class="plan-done">✅ ¡Todo listo por hoy!</li>'
     :sugg.map(s=>`<li class="plan-item" data-s="${s}">📖 ${s}</li>`).join('');
   el.querySelectorAll('.plan-item').forEach(li=>li.addEventListener('click',()=>openSubject(li.dataset.s)));
 }
 
 function renderSubjectGrid(st) {
-  const p=getProgress(st);
-  const studied=new Set((p.quizHistory||[]).map(h=>h.subject));
+  const p=getProgress(st); const studied=new Set((p.quizHistory||[]).map(h=>h.subject));
   const grid=document.getElementById('subjectGrid');
   grid.innerHTML=allSubjects(st).map(s=>`
     <button class="subject-card ${studied.has(s)?'studied':''}" data-s="${s}">
       <span class="subject-icon">${ICONS[s]||'📚'}</span>
-      <h3>${s}</h3>
-      <p>${allQuizzes(st,s).length} quizzes</p>
+      <h3>${s}</h3><p>${allQuizzes(st,s).length} tests</p>
       ${studied.has(s)?'<span class="studied-badge">✓</span>':''}
     </button>`).join('');
   grid.querySelectorAll('.subject-card').forEach(btn=>btn.addEventListener('click',()=>openSubject(btn.dataset.s)));
 }
 
-// ── 10. QUIZ LIST ────────────────────────────────────────────
+// ── 10. TEST LIST ────────────────────────────────────────────
 function openSubject(subject) {
   S.subject=subject;
   document.getElementById('subjectTitle').textContent=subject;
@@ -231,14 +225,17 @@ function openSubject(subject) {
   _quizCache=allQuizzes(S.student,subject);
   const container=document.getElementById('quizCards');
   container.innerHTML=_quizCache.length===0
-    ?'<p class="empty-state">Sin quizzes aún. Agrégalos desde ⚙️ Admin.</p>'
+    ?'<p class="empty-state">Sin tests aún. Agrégalos desde ⚙️ Admin.</p>'
     :_quizCache.map((q,i)=>{
       const hist=(p.quizHistory||[]).filter(h=>h.quizId===quizId(S.student,subject,q.title));
       const best=hist.length?Math.max(...hist.map(h=>h.score)):null;
       const isAI=!(BUILTIN[S.student]?.[subject]?.some(b=>b.title===q.title));
+      const mcCount=q.questions.filter(x=>x.type==='mc'||!x.type).length;
+      const openCount=q.questions.filter(x=>x.type==='open').length;
+      const typePill=openCount>0&&mcCount>0?'🔀 Mixto':openCount>0?'📝 Desarrollo':'⚡ Selección múltiple';
       return `<button class="quiz-card" data-i="${i}">
         <div class="quiz-card-header"><h3>${q.title}</h3>${isAI?'<span class="custom-badge">✨ IA</span>':''}</div>
-        <p>${q.questions.length} pregunta${q.questions.length!==1?'s':''}</p>
+        <p>${q.questions.length} preg. · <span style="font-size:.78rem;color:var(--primary)">${typePill}</span></p>
         ${best!==null?`<div class="quiz-history"><span>Mejor: ${best}%</span><span>${starsHtml(best)}</span></div>`:'<p class="quiz-new">✦ Nuevo</p>'}
       </button>`;
     }).join('');
@@ -247,10 +244,11 @@ function openSubject(subject) {
   showScreen('quizList');
 }
 
-// ── 11. QUIZ ENGINE ──────────────────────────────────────────
+// ── 11. TEST ENGINE ──────────────────────────────────────────
 function startQuiz(quiz,subject) {
   S.quiz=quiz.questions; S.quizMeta={id:quizId(S.student,subject,quiz.title),subject,title:quiz.title};
   S.qIdx=0; S.score=0; S.answers=[];
+  S.totalGradable = S.quiz.filter(q=>q.type==='mc'||!q.type).length || S.quiz.length;
   document.getElementById('quizTitle').textContent=quiz.title;
   document.getElementById('quizMeta').textContent=subject+' · '+(S.student==='santiago'?'Santiago':'Benjamín');
   showScreen('quizScreen'); renderQuestion();
@@ -258,18 +256,65 @@ function startQuiz(quiz,subject) {
 
 function renderQuestion() {
   const q=S.quiz[S.qIdx];
+  const isOpen = q.type==='open';
   document.getElementById('questionText').textContent=q.q;
   document.getElementById('questionCounter').textContent=`Pregunta ${S.qIdx+1} de ${S.quiz.length}`;
   document.getElementById('progressBar').style.width=(S.qIdx/S.quiz.length*100)+'%';
   document.getElementById('feedback').className='feedback hidden';
-  document.getElementById('nextBtn').disabled=true;
+
+  // Badge de tipo
+  const badge=document.getElementById('qTypeBadge');
+  badge.textContent=isOpen?'📝 Desarrollo':'⚡ Selección múltiple';
+  badge.className='q-type-badge '+(isOpen?'badge-open':'badge-mc');
+
   const opts=document.getElementById('options'); opts.innerHTML='';
-  q.options.forEach(opt=>{
-    const btn=document.createElement('button');
-    btn.className='option-btn'; btn.textContent=opt;
-    btn.addEventListener('click',()=>selectAnswer(btn,opt,q.answer,q.hint));
-    opts.appendChild(btn);
-  });
+
+  if (isOpen) {
+    // --- PREGUNTA DE DESARROLLO ---
+    const ta=document.createElement('textarea');
+    ta.className='open-answer'; ta.placeholder='Escribe tu respuesta aquí…'; ta.rows=4;
+    opts.appendChild(ta);
+
+    // Acciones para preguntas abiertas
+    const actions=document.getElementById('quizActions');
+    actions.innerHTML=`
+      <button id="showAnswerBtn" class="primary-btn">📖 Ver respuesta modelo</button>
+    `;
+    document.getElementById('showAnswerBtn').addEventListener('click',()=>{
+      const fb=document.getElementById('feedback');
+      fb.className='feedback open-reveal';
+      fb.innerHTML=`<strong>Respuesta esperada:</strong><br>${q.answer}<br><small style="color:var(--muted)">💡 ${q.hint}</small>`;
+      // Reemplazar botón con autoevaluación
+      actions.innerHTML=`
+        <button id="selfYes" class="self-btn self-yes">✅ Lo supe</button>
+        <button id="selfNo"  class="self-btn self-no">❌ No lo supe</button>
+      `;
+      document.getElementById('selfYes').addEventListener('click',()=>recordOpen(true));
+      document.getElementById('selfNo').addEventListener('click',()=>recordOpen(false));
+      ta.disabled=true; playSound('correct');
+    });
+
+  } else {
+    // --- SELECCIÓN MÚLTIPLE ---
+    const actions=document.getElementById('quizActions');
+    actions.innerHTML=`
+      <button id="hintBtn"  class="secondary-btn" style="flex:1">💡 Pista</button>
+      <button id="nextBtn"  class="primary-btn"   style="flex:2" disabled>Siguiente →</button>
+    `;
+    document.getElementById('hintBtn').addEventListener('click',()=>{
+      const fb=document.getElementById('feedback');
+      fb.className='feedback hint'; fb.innerHTML=`💡 ${q.hint}`;
+    });
+    document.getElementById('nextBtn').addEventListener('click',advanceQuestion);
+
+    q.options.forEach(opt=>{
+      const btn=document.createElement('button');
+      btn.className='option-btn'; btn.textContent=opt;
+      btn.addEventListener('click',()=>selectAnswer(btn,opt,q.answer,q.hint));
+      opts.appendChild(btn);
+    });
+    document.getElementById('nextBtn').disabled=true;
+  }
 }
 
 function selectAnswer(btn,sel,correct,hint) {
@@ -277,34 +322,47 @@ function selectAnswer(btn,sel,correct,hint) {
   const ok=sel===correct;
   if(ok){btn.classList.add('correct');S.score++;playSound('correct');}
   else{btn.classList.add('wrong');document.querySelectorAll('.option-btn').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});playSound('wrong');}
-  S.answers.push({question:S.quiz[S.qIdx].q,sel,correct,ok});
+  S.answers.push({type:'mc',question:S.quiz[S.qIdx].q,sel,correct,ok});
   const fb=document.getElementById('feedback');
   fb.className='feedback '+(ok?'good':'bad');
   fb.innerHTML=ok?'✅ ¡Correcto!':`❌ Correcto: <strong>${correct}</strong><br><small>💡 ${hint}</small>`;
   document.getElementById('nextBtn').disabled=false;
 }
 
-document.getElementById('nextBtn').addEventListener('click',()=>{
-  S.qIdx++; if(S.qIdx<S.quiz.length) renderQuestion(); else showResults();
-});
-document.getElementById('hintBtn').addEventListener('click',()=>{
-  const fb=document.getElementById('feedback');
-  fb.className='feedback hint'; fb.innerHTML=`💡 ${S.quiz[S.qIdx].hint}`;
-});
+function recordOpen(selfOk) {
+  if(selfOk) S.score++;
+  S.answers.push({type:'open',question:S.quiz[S.qIdx].q,ok:selfOk,modelAnswer:S.quiz[S.qIdx].answer});
+  playSound(selfOk?'correct':'wrong');
+  advanceQuestion();
+}
+
+function advanceQuestion() {
+  S.qIdx++;
+  if (S.qIdx < S.quiz.length) renderQuestion();
+  else showResults();
+}
 
 function showResults() {
-  const pct=Math.round(S.score/S.quiz.length*100);
+  const total=S.quiz.length;
+  const pct=Math.round(S.score/total*100);
   const [title,msg]=pct===100?['🏆 ¡Perfecto!','¡Dominas el tema!']:pct>=80?['🌟 ¡Muy bien!','Sigue así.']:pct>=60?['👍 ¡Bien!','Hay espacio para mejorar.']:['📚 Sigue practicando','Repasa y vuelve a intentarlo.'];
   document.getElementById('resultTitle').textContent=title;
   document.getElementById('scoreCircle').textContent=pct+'%';
   document.getElementById('scoreCircle').style.background=pct>=80?'var(--success)':pct>=60?'var(--warning)':'var(--danger)';
-  document.getElementById('resultMessage').textContent=msg;
+  document.getElementById('resultMessage').textContent=`${msg} (${S.score}/${total} correctas)`;
   document.getElementById('earnedBadges').innerHTML=`<div class="stars-earned">${starsHtml(pct)} (${Math.ceil(pct/20)}/5 estrellas)</div>`;
   document.getElementById('reviewList').innerHTML=S.answers.map(a=>
-    `<div class="review-item ${a.ok?'review-correct':'review-wrong'}">
-      <span>${a.ok?'✅':'❌'}</span>
-      <div><strong>${a.question}</strong>${!a.ok?`<br><span class="review-answer">${a.sel} → ${a.correct}</span>`:''}</div>
-    </div>`).join('');
+    a.type==='open'
+      ?`<div class="review-item ${a.ok?'review-correct':'review-wrong'}">
+          <span>${a.ok?'✅':'❌'}</span>
+          <div><strong>${a.question}</strong><br>
+          <span class="review-answer">Resp. esperada: ${a.modelAnswer}</span></div>
+        </div>`
+      :`<div class="review-item ${a.ok?'review-correct':'review-wrong'}">
+          <span>${a.ok?'✅':'❌'}</span>
+          <div><strong>${a.question}</strong>${!a.ok?`<br><span class="review-answer">${a.sel} → ${a.correct}</span>`:''}</div>
+        </div>`
+  ).join('');
   document.getElementById('progressBar').style.width='100%';
   S.lastPct=pct; S.lastOk=S.score; playSound('complete'); showScreen('resultScreen');
 }
@@ -337,15 +395,11 @@ document.getElementById('pinSubmit').addEventListener('click',()=>{
   }
 });
 document.getElementById('pinInput').addEventListener('keypress',e=>{if(e.key==='Enter')document.getElementById('pinSubmit').click();});
-
 document.getElementById('saveApiKey').addEventListener('click',()=>{
   const k=document.getElementById('apiKeyInput').value.trim(); if(!k)return;
-  setApiKey(k);
-  document.getElementById('apiKeyStatus').textContent='✅ API Key guardada';
-  document.getElementById('apiKeyInput').value='';
-  document.getElementById('apiKeyInput').placeholder='sk-ant-… (ya configurada)';
+  setApiKey(k); document.getElementById('apiKeyStatus').textContent='✅ API Key guardada';
+  document.getElementById('apiKeyInput').value=''; document.getElementById('apiKeyInput').placeholder='sk-ant-… (ya configurada)';
 });
-
 document.getElementById('resetProgress').addEventListener('click',()=>{
   if(!confirm('⚠️ ¿Borrar TODO el progreso?'))return;
   localStorage.removeItem('prg_santiago'); localStorage.removeItem('prg_benjamin');
@@ -363,7 +417,7 @@ function renderCustomQuizList() {
     }));
     html+='</div>';
   });
-  list.innerHTML=html||'<p class="empty-state">Aún no hay quizzes generados con IA.</p>';
+  list.innerHTML=html||'<p class="empty-state">Aún no hay tests generados con IA.</p>';
   list.querySelectorAll('.delete-btn').forEach(btn=>btn.addEventListener('click',()=>{
     const t=decodeURIComponent(btn.dataset.t);
     if(!confirm(`¿Eliminar "${t}"?`))return;
@@ -371,7 +425,7 @@ function renderCustomQuizList() {
   }));
 }
 
-// ── 13. PDF → CLAUDE API ─────────────────────────────────────
+// ── 13. PDF → CLAUDE API (con retry en rate limit) ──────────
 function fileToBase64(file) {
   return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); });
 }
@@ -394,7 +448,7 @@ function renderPdfList() {
     <div class="pdf-item">
       <span>📄</span>
       <div style="flex:1">
-        <input class="pdf-title-inp" data-i="${i}" value="${p.title.replace(/"/g,'&quot;')}" placeholder="Título del quiz"/>
+        <input class="pdf-title-inp" data-i="${i}" value="${p.title.replace(/"/g,'&quot;')}" placeholder="Título del test"/>
         <small style="color:var(--muted);font-size:.72rem">${p.file.name} · ${(p.file.size/1024).toFixed(0)} KB</small>
       </div>
       <button class="delete-btn pdf-rm" data-i="${i}">✕</button>
@@ -406,24 +460,66 @@ function renderPdfList() {
   }));
 }
 
-async function generateQuizFromPdf(apiKey,file,grade,numQ) {
+function buildPrompt(grade, numQ, tipo) {
+  const instrMC  = `- Selección múltiple: exactamente 4 opciones, una correcta, campo "type":"mc"`;
+  const instrOpen= `- Desarrollo: pregunta abierta con respuesta esperada breve (2-3 líneas), campo "type":"open"`;
+  let breakdown;
+  if      (tipo==='mc')    { breakdown = `Las ${numQ} preguntas deben ser de selección múltiple.\n${instrMC}`; }
+  else if (tipo==='open')  { breakdown = `Las ${numQ} preguntas deben ser de desarrollo.\n${instrOpen}`; }
+  else { // mixed
+    const half=Math.round(numQ/2);
+    breakdown = `Genera ${half} preguntas de selección múltiple y ${numQ-half} de desarrollo.\n${instrMC}\n${instrOpen}`;
+  }
+  return `Eres un experto en educación chilena. Genera exactamente ${numQ} preguntas para un estudiante de ${grade} basándote en este documento.
+
+${breakdown}
+
+Pistas: breves, sin revelar la respuesta directamente.
+RESPONDE SOLO con JSON válido, sin texto adicional ni markdown:
+
+[
+  {"type":"mc","q":"pregunta","options":["A","B","C","D"],"answer":"opción correcta exacta","hint":"pista"},
+  {"type":"open","q":"pregunta de desarrollo","answer":"respuesta esperada","hint":"pista"}
+]`;
+}
+
+async function generateQuizFromPdf(apiKey, file, grade, numQ, tipo) {
   const b64=await fileToBase64(file);
   const r=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({
-      model:'claude-sonnet-4-6', max_tokens:2000,
+      model:'claude-sonnet-4-6', max_tokens:3000,
       messages:[{role:'user',content:[
         {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
-        {type:'text',text:`Eres un experto en educación chilena. Genera exactamente ${numQ} preguntas de selección múltiple para un estudiante de ${grade} basándote en este documento.
-RESPONDE SOLO con JSON válido, sin texto adicional:
-[{"q":"pregunta","options":["A","B","C","D"],"answer":"opción correcta exacta","hint":"pista"}]`}
+        {type:'text',text:buildPrompt(grade,numQ,tipo)}
       ]}]
     })
   });
   if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error?.message||`HTTP ${r.status}`);}
   const d=await r.json();
   return JSON.parse(d.content[0].text.trim().replace(/^```json\s*/i,'').replace(/\s*```$/,'').trim());
+}
+
+// Retry automático si hay rate limit
+async function generateWithRetry(apiKey, file, grade, numQ, tipo, updateMsg) {
+  for (let attempt=0; attempt<3; attempt++) {
+    try {
+      return await generateQuizFromPdf(apiKey,file,grade,numQ,tipo);
+    } catch(err) {
+      const isRateLimit = err.message.toLowerCase().includes('rate limit') || err.message.includes('10,000');
+      if (isRateLimit && attempt<2) {
+        // Esperar 65 segundos con cuenta regresiva
+        for (let s=65; s>0; s--) {
+          updateMsg(`⏳ Límite de API alcanzado. Reintentando en ${s}s…`);
+          await sleep(1000);
+        }
+        updateMsg(`🔄 Reintentando…`);
+      } else {
+        throw err;
+      }
+    }
+  }
 }
 
 // PDF zone listeners
@@ -434,27 +530,33 @@ _pz.addEventListener('dragover', e=>{e.preventDefault();_pz.classList.add('drag-
 _pz.addEventListener('dragleave',()=>_pz.classList.remove('drag-over'));
 _pz.addEventListener('drop',e=>{e.preventDefault();_pz.classList.remove('drag-over');addPdfs(e.dataTransfer.files);});
 
-// Generate button
+// Generate
 document.getElementById('generateBtn').addEventListener('click',async()=>{
   const key=getApiKey(); if(!key){alert('⚠️ Configura tu API Key primero.');return;}
   const subject=document.getElementById('adminSubject').value.trim(); if(!subject){alert('⚠️ Escribe el nombre de la materia.');return;}
   const student=document.getElementById('adminStudent').value;
   const numQ=parseInt(document.getElementById('adminNumQ').value);
+  const tipo=document.getElementById('adminQType').value;
   const grade=student==='santiago'?'4° básico (10 años)':'3° básico (9 años)';
-  const statusEl=document.getElementById('genStatus'), msgEl=document.getElementById('genMsg'), resultEl=document.getElementById('genResult');
+  const msgEl=document.getElementById('genMsg'), statusEl=document.getElementById('genStatus'), resultEl=document.getElementById('genResult');
+  const updateMsg=t=>{ msgEl.textContent=t; };
   statusEl.classList.remove('hidden'); resultEl.classList.add('hidden');
   document.getElementById('generateBtn').disabled=true;
   let saved=0, failed=[];
   for(let i=0;i<_pdfs.length;i++){
     const {file,title}=_pdfs[i];
-    msgEl.textContent=`Procesando ${i+1}/${_pdfs.length}: ${title}…`;
-    try{const qs=await generateQuizFromPdf(key,file,grade,numQ); saveCustom(student,subject,{title,questions:qs}); saved++;}
-    catch(err){failed.push(`${title}: ${err.message}`);}
+    updateMsg(`Procesando ${i+1}/${_pdfs.length}: ${title}…`);
+    try{
+      const qs=await generateWithRetry(key,file,grade,numQ,tipo,updateMsg);
+      saveCustom(student,subject,{title,questions:qs}); saved++;
+    }catch(err){ failed.push(`${title}: ${err.message}`); }
+    // Pausa entre archivos para evitar rate limit
+    if(i<_pdfs.length-1){ updateMsg(`Esperando antes del siguiente PDF…`); await sleep(8000); }
   }
   statusEl.classList.add('hidden'); document.getElementById('generateBtn').disabled=false;
   const name=student==='santiago'?'Santiago':'Benjamín';
   resultEl.className='gen-result '+(failed.length&&!saved?'result-error':'result-ok');
-  resultEl.innerHTML=(saved?`✅ ${saved} quiz${saved>1?'zes':''} guardado${saved>1?'s':''} para ${name} en <strong>${subject}</strong>.<br>`:'')+(failed.length?`❌ ${failed.join(', ')}`: '');
+  resultEl.innerHTML=(saved?`✅ ${saved} test${saved>1?'s':''} guardado${saved>1?'s':''} para ${name} en <strong>${subject}</strong>.<br>`:'')+(failed.length?`❌ ${failed.join('<br>')}`: '');
   resultEl.classList.remove('hidden');
   if(saved){_pdfs=[];renderPdfList();document.getElementById('adminSubject').value='';renderCustomQuizList();if(S.student===student)renderDashboard();}
 });
@@ -466,7 +568,7 @@ document.querySelectorAll('.profile-card').forEach(btn=>btn.addEventListener('cl
 document.getElementById('backHome').addEventListener('click',()=>{renderHome();showScreen('home');});
 document.getElementById('backDashboard').addEventListener('click',()=>showScreen('dashboard'));
 document.getElementById('exitQuiz').addEventListener('click',()=>showScreen('quizList'));
-document.getElementById('backFromAdmin').addEventListener('click',()=>{ if(S.student){renderDashboard();showScreen('dashboard');}else{renderHome();showScreen('home');} });
+document.getElementById('backFromAdmin').addEventListener('click',()=>{if(S.student){renderDashboard();showScreen('dashboard');}else{renderHome();showScreen('home');}});
 document.getElementById('adminBtn').addEventListener('click',showAdmin);
 document.getElementById('dashAdminBtn').addEventListener('click',showAdmin);
 document.getElementById('themeToggle').addEventListener('click',()=>{const c=getSettings().theme;setSetting('theme',c==='dark'?'light':'dark');applyTheme();});
@@ -475,7 +577,6 @@ document.getElementById('soundToggle').addEventListener('click',()=>{const c=get
 // ── 15. INIT ─────────────────────────────────────────────────
 (function init(){
   applyTheme();
-  const s=getSettings();
-  document.getElementById('soundToggle').textContent=s.sound?'🔊 Sonido: ON':'🔇 Sonido: OFF';
+  document.getElementById('soundToggle').textContent=getSettings().sound?'🔊 Sonido: ON':'🔇 Sonido: OFF';
   renderHome();
 })();
