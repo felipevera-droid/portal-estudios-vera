@@ -153,6 +153,7 @@
             <select id="adminStudent">
               <option value="santiago">🚀 Santiago</option>
               <option value="benjamin">🦊 Benjamín</option>
+              <option value="ambos">👥 Ambos</option>
             </select>
           </div>
           <div class="form-group">
@@ -211,6 +212,18 @@
             <button id="saveApiKey" class="secondary-btn">Guardar</button>
           </div>
           <p id="apiKeyStatus" style="font-size:.8rem;margin-top:6px;color:var(--success)"></p>
+        </div>
+
+
+        <div class="admin-section sync-section">
+          <h3>🔄 Sincronización entre dispositivos</h3>
+          <p class="hint-text">Los tests creados aquí aparecerán en todos los dispositivos al abrir el portal.</p>
+          <div class="api-key-row">
+            <input id="ghTokenInput" type="password" placeholder="GitHub Token (ghp_…)"/>
+            <button id="saveGhToken" class="secondary-btn">Guardar</button>
+          </div>
+          <p id="ghTokenStatus" style="font-size:.8rem;margin-top:6px"></p>
+          <div id="ghSyncStatus" class="sync-status hidden"></div>
         </div>
 
         <div class="admin-section danger-zone">
