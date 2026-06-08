@@ -18,20 +18,18 @@
       <div class="home-tools">
         <button id="themeToggle" class="ghost-btn">🌙 Modo oscuro</button>
         <button id="soundToggle" class="ghost-btn">🔊 Sonido: ON</button>
-        <button id="adminBtn"    class="ghost-btn">⚙️ Admin</button>
+        <button id="adminBtn"    class="ghost-btn">⚙️</button>
       </div>
     </div>
     <div class="profile-grid">
       <button class="profile-card" data-student="santiago">
         <span class="avatar">🚀</span>
         <span class="profile-name">Santiago</span>
-        
         <div class="profile-stats" id="homeStatsSantiago"></div>
       </button>
       <button class="profile-card" data-student="benjamin">
         <span class="avatar">🦊</span>
         <span class="profile-name">Benjamín</span>
-        
         <div class="profile-stats" id="homeStatsBenjamin"></div>
       </button>
     </div>
@@ -74,7 +72,7 @@
     <div id="subjectGrid" class="subject-grid"></div>
   </section>
 
-  <!-- TEST LIST -->
+  <!-- LISTA DE TESTS -->
   <section id="quizList" class="screen">
     <nav class="topbar">
       <button id="backDashboard" class="ghost-btn">← Volver</button>
@@ -86,7 +84,7 @@
     <div id="quizCards" class="quiz-grid"></div>
   </section>
 
-  <!-- TEST (preguntas) -->
+  <!-- TEST -->
   <section id="quizScreen" class="screen">
     <nav class="topbar">
       <button id="exitQuiz" class="ghost-btn">← Salir</button>
@@ -100,14 +98,9 @@
       <p id="questionCounter" class="counter"></p>
       <p id="qTypeBadge" class="q-type-badge"></p>
       <h3 id="questionText" class="question"></h3>
-      <!-- MC: botones de opciones / Open: textarea -->
       <div id="options" class="options"></div>
       <div id="feedback" class="feedback hidden"></div>
-      <!-- Acciones: cambian según tipo de pregunta -->
-      <div id="quizActions" class="quiz-actions">
-        <button id="hintBtn"  class="secondary-btn" style="flex:1">💡 Pista</button>
-        <button id="nextBtn"  class="primary-btn"   style="flex:2" disabled>Siguiente →</button>
-      </div>
+      <div id="quizActions" class="quiz-actions"></div>
     </div>
   </section>
 
@@ -124,113 +117,36 @@
     </div>
   </section>
 
-  <!-- ADMIN -->
+  <!-- ADMIN (solo borrar) -->
   <section id="adminScreen" class="screen">
     <nav class="topbar">
       <button id="backFromAdmin" class="ghost-btn">← Volver</button>
       <div>
-        <p class="eyebrow">Configuración</p>
+        <p class="eyebrow">Administración</p>
         <h2>Panel Admin</h2>
       </div>
     </nav>
     <div class="admin-panel">
-
       <div id="pinGate" class="pin-gate">
         <h3>🔐 Acceso admin</h3>
-        <p class="pin-note">PIN predeterminado: <strong>1234</strong></p>
+        <p class="pin-note">PIN: <strong>1234</strong></p>
         <input id="pinInput" type="password" maxlength="6" class="pin-input" placeholder="••••"/>
         <button id="pinSubmit" class="primary-btn">Entrar</button>
         <p id="pinError" class="error-msg hidden">❌ PIN incorrecto</p>
       </div>
-
       <div id="adminContent" class="hidden">
-
-        <div class="admin-section">
-          <h3>✨ Generar test desde PDF(s)</h3>
-
-          <div class="form-group">
-            <label>Estudiante</label>
-            <select id="adminStudent">
-              <option value="santiago">🚀 Santiago</option>
-              <option value="benjamin">🦊 Benjamín</option>
-              <option value="ambos">👥 Ambos</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Materia</label>
-            <input id="adminSubject" placeholder="Ciencias, Historia, Lenguaje…"/>
-          </div>
-          <div class="form-row">
-            <div class="form-group" style="flex:1">
-              <label>Nº de preguntas por test</label>
-              <select id="adminNumQ">
-                <option value="5">5 preguntas</option>
-                <option value="8">8 preguntas</option>
-                <option value="10" selected>10 preguntas</option>
-                <option value="12">12 preguntas</option>
-                <option value="15">15 preguntas</option>
-                <option value="20">20 preguntas</option>
-              </select>
-            </div>
-            <div class="form-group" style="flex:1">
-              <label>Tipo de preguntas</label>
-              <select id="adminQType">
-                <option value="mixed">🔀 Mixto (MC + desarrollo)</option>
-                <option value="mc">⚡ Solo selección múltiple</option>
-                <option value="open">📝 Solo desarrollo</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>PDFs del colegio <span class="label-hint">(puedes subir varios a la vez)</span></label>
-            <div class="pdf-zone" id="pdfZone">
-              <input type="file" id="pdfInput" accept=".pdf" multiple style="display:none"/>
-              <button type="button" id="pdfPickBtn" class="secondary-btn">📄 Seleccionar PDF(s)</button>
-              <p class="pdf-hint">o arrastra uno o varios archivos aquí</p>
-            </div>
-            <div id="pdfList"></div>
-          </div>
-
-          <button id="generateBtn" class="primary-btn ai-btn" disabled>✨ Generar tests con IA</button>
-          <div id="genStatus" class="ai-loading hidden">
-            <div class="spinner"></div>
-            <span id="genMsg">Procesando…</span>
-          </div>
-          <div id="genResult" class="gen-result hidden"></div>
+        <div class="admin-info">
+          <p>🤖 Para agregar tests, sube los PDFs del colegio al <strong>chat de Claude</strong>.<br>
+          Él los genera y los publica aquí automáticamente.</p>
         </div>
-
         <div class="admin-section">
-          <h3>🗂️ Tests guardados</h3>
+          <h3>🗂️ Tests publicados</h3>
           <div id="customQuizList"></div>
         </div>
-
-        <div class="admin-section">
-          <h3>🔑 API Key de Anthropic</h3>
-          <p class="hint-text"><a href="https://console.anthropic.com" target="_blank">Obtén tu key aquí →</a></p>
-          <div class="api-key-row">
-            <input id="apiKeyInput" type="password" placeholder="sk-ant-api03-…"/>
-            <button id="saveApiKey" class="secondary-btn">Guardar</button>
-          </div>
-          <p id="apiKeyStatus" style="font-size:.8rem;margin-top:6px;color:var(--success)"></p>
-        </div>
-
-
-        <div class="admin-section sync-section">
-          <h3>🔄 Sincronización entre dispositivos</h3>
-          <p class="hint-text">Los tests creados aquí aparecerán en todos los dispositivos al abrir el portal.</p>
-          <div class="api-key-row">
-            <input id="ghTokenInput" type="password" placeholder="GitHub Token (ghp_…)"/>
-            <button id="saveGhToken" class="secondary-btn">Guardar</button>
-          </div>
-          <p id="ghTokenStatus" style="font-size:.8rem;margin-top:6px"></p>
-          <div id="ghSyncStatus" class="sync-status hidden"></div>
-        </div>
-
         <div class="admin-section danger-zone">
           <h3>⚠️ Zona peligrosa</h3>
           <button id="resetProgress" class="danger-btn">🗑️ Borrar todo el progreso</button>
         </div>
-
       </div>
     </div>
   </section>
