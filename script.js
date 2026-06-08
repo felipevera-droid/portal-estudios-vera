@@ -633,8 +633,110 @@ document.getElementById('resetProgress').addEventListener('click', () => {
 });
 
 // ============================================================
-// 14. EVENT LISTENERS GLOBALES
+// 13b. CARGA Y EXTRACCIÓN DE PDF
 // ============================================================
+function initPdfJs() {
+  if (!window.pdfjsLib) return;
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+async function extractPdfText(file) {
+  initPdfJs();
+  const lib = window.pdfjsLib;
+  if (!lib) throw new Error('PDF.js no disponible. Verifica tu conexión a internet.');
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf         = await lib.getDocument({ data: arrayBuffer }).promise;
+  const status      = document.getElementById('pdfStatus');
+  let text          = '';
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page    = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    // Join items, preserving paragraph breaks
+    const pageText = content.items.map(it => it.str).join(' ').replace(/\s{3,}/g, '\n\n');
+    text += pageText + '\n\n';
+    if (status) status.textContent = `Leyendo página ${i} de ${pdf.numPages}…`;
+  }
+  return text.trim();
+}
+
+async function handlePdfFile(file) {
+  if (!file) return;
+  if (file.type !== 'application/pdf') { alert('⚠️ Solo se aceptan archivos PDF.'); return; }
+
+  const status   = document.getElementById('pdfStatus');
+  const dropZone = document.getElementById('pdfDropZone');
+
+  status.classList.remove('hidden');
+  status.textContent = '⏳ Leyendo PDF…';
+  dropZone.classList.add('pdf-loading');
+  document.getElementById('pdfBtn').disabled = true;
+
+  try {
+    const text = await extractPdfText(file);
+
+    if (!text || text.replace(/\s/g,'').length < 80) {
+      status.innerHTML =
+        '⚠️ Este PDF parece ser una imagen escaneada (no tiene texto seleccionable).<br>' +
+        'Solución: <strong>tómale una foto y pégala aquí en Claude</strong> pidiendo "transcribe este texto".';
+      return;
+    }
+
+    document.getElementById('adminMaterial').value = text;
+
+    // Auto-completar título desde nombre del archivo si está vacío
+    const titleEl = document.getElementById('adminQuizTitle');
+    if (!titleEl.value.trim()) {
+      titleEl.value = file.name
+        .replace(/\.pdf$/i, '')
+        .replace(/[-_]/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    const chars    = text.replace(/\s/g,'').length;
+    const approxPg = pdf_approxPages(text);
+    status.textContent =
+      `✅ ${file.name} — ${approxPg} página${approxPg!==1?'s':''} · ${chars.toLocaleString()} caracteres. ¡Listo para generar!`;
+
+  } catch(err) {
+    status.textContent = '❌ Error: ' + err.message;
+  } finally {
+    dropZone.classList.remove('pdf-loading');
+    document.getElementById('pdfBtn').disabled = false;
+    // Reset file input so the same file can be re-loaded if needed
+    document.getElementById('pdfFileInput').value = '';
+  }
+}
+
+function pdf_approxPages(text) {
+  // ~250 words per page as rough estimate
+  const words = text.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 250));
+}
+
+// Botón cargar
+document.getElementById('pdfBtn').addEventListener('click', () =>
+  document.getElementById('pdfFileInput').click());
+
+// Selección de archivo
+document.getElementById('pdfFileInput').addEventListener('change', e => {
+  if (e.target.files[0]) handlePdfFile(e.target.files[0]);
+});
+
+// Drag & drop
+const _dz = document.getElementById('pdfDropZone');
+_dz.addEventListener('dragover',  e => { e.preventDefault(); _dz.classList.add('drag-over');    });
+_dz.addEventListener('dragleave', ()  => _dz.classList.remove('drag-over'));
+_dz.addEventListener('drop',      e  => {
+  e.preventDefault();
+  _dz.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handlePdfFile(file);
+});
+
+
 document.querySelectorAll('.profile-card').forEach(btn =>
   btn.addEventListener('click', () => {
     S.student = btn.dataset.student;
