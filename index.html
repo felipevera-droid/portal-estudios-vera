@@ -200,6 +200,22 @@
           <button id="saveQuizBtn" class="primary-btn" style="margin-top:12px">💾 Guardar quiz</button>
         </div>
 
+        <!-- IMPORTAR JSON (generado desde Claude chat) -->
+        <div class="admin-section import-section">
+          <h3>📥 Importar quizzes desde Claude</h3>
+          <p class="hint-text">
+            Sube los PDFs en el chat de Claude → él genera el archivo → lo importas aquí.
+          </p>
+          <div class="import-drop-zone" id="importDropZone">
+            <input type="file" id="jsonImportInput" accept=".json" style="display:none"/>
+            <button type="button" id="jsonImportBtn" class="secondary-btn" style="width:auto">
+              📂 Seleccionar archivo de quizzes (.json)
+            </button>
+            <p class="pdf-hint">o arrastra el archivo aquí</p>
+            <div id="importStatus" class="pdf-status hidden"></div>
+          </div>
+        </div>
+
         <div class="admin-section">
           <h3>🗂️ Quizzes guardados con IA</h3>
           <div id="customQuizList"></div>
