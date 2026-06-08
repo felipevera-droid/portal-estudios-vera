@@ -6,6 +6,10 @@
 // Modelo base — Haiku es el más eficiente en tokens
 const MODEL = 'claude-haiku-4-5-20251001';
 
+// Repositorio GitHub para sincronización entre dispositivos
+const GITHUB_REPO = 'felipevera-droid/vera';
+const PORTAL_URL  = 'https://felipevera-droid.github.io/vera';
+
 // ── 1. DATOS BASE ────────────────────────────────────────────
 const BUILTIN = {
   santiago: {
@@ -100,6 +104,7 @@ function saveCustom(st, subject, quiz) {
   const r=localStorage.getItem('custom'); const all=r?JSON.parse(r):{};
   if(!all[st])all[st]={}; if(!all[st][subject])all[st][subject]=[];
   all[st][subject].push(quiz); localStorage.setItem('custom',JSON.stringify(all));
+  pushRemoteData(); // sync a GitHub en segundo plano
 }
 function deleteCustom(st, subject, title) {
   const r=localStorage.getItem('custom'); if(!r)return;
@@ -108,11 +113,14 @@ function deleteCustom(st, subject, title) {
     if(!all[st][subject].length)delete all[st][subject];
     if(!Object.keys(all[st]).length)delete all[st]; }
   localStorage.setItem('custom',JSON.stringify(all));
+  pushRemoteData();
 }
 function getSettings() { return JSON.parse(localStorage.getItem('cfg')||'{"theme":"light","sound":true,"pin":"1234"}'); }
 function setSetting(k,v){ const s=getSettings(); s[k]=v; localStorage.setItem('cfg',JSON.stringify(s)); }
 function getApiKey()    { return localStorage.getItem('api_key')||''; }
 function setApiKey(k)   { localStorage.setItem('api_key',k); }
+function getGhToken()   { return localStorage.getItem('gh_token')||''; }
+function setGhToken(t)  { localStorage.setItem('gh_token',t); }
 
 // ── 4. UTILS ─────────────────────────────────────────────────
 function toDay()         { return new Date().toISOString().slice(0,10); }
@@ -410,25 +418,107 @@ document.getElementById('resetProgress').addEventListener('click',()=>{
 });
 
 function renderCustomQuizList() {
-  const list=document.getElementById('customQuizList'); let html='';
+  const list=document.getElementById('customQuizList');
+  let html=''; let totalSantiago=0, totalBenjamin=0;
+
   ['santiago','benjamin'].forEach(st=>{
     const cq=getCustom(st); const subs=Object.keys(cq); if(!subs.length)return;
-    html+=`<div class="custom-student"><strong>${st==='santiago'?'🚀 Santiago':'🦊 Benjamín'}</strong>`;
+    const other = st==='santiago'?'benjamin':'santiago';
+    const otherIcon = st==='santiago'?'🦊':'🚀';
+    const otherName = st==='santiago'?'Benjamín':'Santiago';
+    let count=0;
+    subs.forEach(sub=>count+=cq[sub].length);
+    if(st==='santiago') totalSantiago=count; else totalBenjamin=count;
+    html+=`<div class="custom-student">
+      <strong>${st==='santiago'?'🚀 Santiago':'🦊 Benjamín'} <span class="quiz-count">${count} test${count!==1?'s':''}</span></strong>`;
     subs.forEach(sub=>cq[sub].forEach(q=>{
-      html+=`<div class="custom-quiz-item"><span>${sub} — ${q.title} (${q.questions.length}q)</span>
-        <button class="delete-btn" data-st="${st}" data-sub="${sub}" data-t="${encodeURIComponent(q.title)}">🗑️</button></div>`;
+      html+=`<div class="custom-quiz-item">
+        <span>${sub} — ${q.title} (${q.questions.length}q)</span>
+        <div style="display:flex;gap:4px">
+          <button class="copy-btn" data-st="${st}" data-other="${other}" data-sub="${sub}"
+            data-t="${encodeURIComponent(q.title)}" title="Copiar a ${otherName}">${otherIcon} Copiar</button>
+          <button class="delete-btn" data-st="${st}" data-sub="${sub}"
+            data-t="${encodeURIComponent(q.title)}">🗑️</button>
+        </div>
+      </div>`;
     }));
     html+='</div>';
   });
-  list.innerHTML=html||'<p class="empty-state">Aún no hay tests generados con IA.</p>';
+
+  if(!html) {
+    list.innerHTML='<p class="empty-state">Aún no hay tests generados con IA.</p>';
+    return;
+  }
+  // Summary header
+  list.innerHTML=`<div class="quiz-summary">
+    <span>🚀 Santiago: <strong>${totalSantiago}</strong></span>
+    <span>🦊 Benjamín: <strong>${totalBenjamin}</strong></span>
+  </div>`+html;
+
   list.querySelectorAll('.delete-btn').forEach(btn=>btn.addEventListener('click',()=>{
     const t=decodeURIComponent(btn.dataset.t);
     if(!confirm(`¿Eliminar "${t}"?`))return;
     deleteCustom(btn.dataset.st,btn.dataset.sub,t); renderCustomQuizList();
   }));
+
+  list.querySelectorAll('.copy-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    const t=decodeURIComponent(btn.dataset.t);
+    const src=getCustom(btn.dataset.st)[btn.dataset.sub]?.find(q=>q.title===t);
+    if(!src)return;
+    saveCustom(btn.dataset.other, btn.dataset.sub, {title:src.title, questions:src.questions});
+    renderCustomQuizList();
+    if(S.student===btn.dataset.other) renderDashboard();
+    const otherName=btn.dataset.other==='santiago'?'Santiago':'Benjamín';
+    alert(`✅ "${t}" copiado a ${otherName}.`);
+  }));
 }
 
-// ── 13. PDF → CLAUDE API (con retry en rate limit) ──────────
+// ── 13. SINCRONIZACIÓN REMOTA (data.json en GitHub) ─────────
+
+// Carga tests desde GitHub Pages (disponible en todos los dispositivos)
+async function loadRemoteData() {
+  try {
+    const r = await fetch(`${PORTAL_URL}/data.json?_=${Date.now()}`);
+    if (!r.ok) return;
+    const remote = await r.json();
+    if (Object.keys(remote).length > 0) {
+      // Merge: remoto tiene prioridad sobre caché local
+      localStorage.setItem('custom', JSON.stringify(remote));
+    }
+  } catch(e) { /* usa caché localStorage si no hay red */ }
+}
+
+// Sube todos los tests a GitHub → visible en todos los dispositivos
+async function pushRemoteData() {
+  const token = getGhToken();
+  if (!token) return;                                    // sin token = solo local
+  const statusEl = document.getElementById('ghSyncStatus');
+  if (statusEl) { statusEl.classList.remove('hidden'); statusEl.textContent = '⏳ Guardando en todos los dispositivos…'; }
+  try {
+    const all     = JSON.parse(localStorage.getItem('custom') || '{}');
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(all, null, 2))));
+    // Obtener SHA actual de data.json (necesario para actualizarlo)
+    const metaR = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/data.json`,
+      { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' } });
+    const meta  = await metaR.json();
+    const body  = { message:'Portal: update tests', content };
+    if (meta.sha) body.sha = meta.sha;
+    const putR = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/data.json`, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github+json' },
+      body: JSON.stringify(body)
+    });
+    if (statusEl) {
+      statusEl.textContent = putR.ok
+        ? '✅ Sincronizado — disponible en todos los dispositivos'
+        : '⚠️ Error al sincronizar: ' + (await putR.json().then(d=>d.message).catch(()=>''));
+    }
+  } catch(e) {
+    if (statusEl) statusEl.textContent = '⚠️ Sin conexión — guardado solo en este dispositivo';
+  }
+}
+
+// ── 14. PDF → CLAUDE API (con retry en rate limit) ──────────
 function fileToBase64(file) {
   return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(file); });
 }
@@ -602,9 +692,21 @@ document.getElementById('dashAdminBtn').addEventListener('click',showAdmin);
 document.getElementById('themeToggle').addEventListener('click',()=>{const c=getSettings().theme;setSetting('theme',c==='dark'?'light':'dark');applyTheme();});
 document.getElementById('soundToggle').addEventListener('click',()=>{const c=getSettings().sound;setSetting('sound',!c);document.getElementById('soundToggle').textContent=c?'🔇 Sonido: OFF':'🔊 Sonido: ON';});
 
-// ── 15. INIT ─────────────────────────────────────────────────
-(function init(){
+// ── 16. INIT ─────────────────────────────────────────────────
+(async function init(){
   applyTheme();
   document.getElementById('soundToggle').textContent=getSettings().sound?'🔊 Sonido: ON':'🔇 Sonido: OFF';
+  // Cargar tests remotos (con timeout de 4s para no bloquear si hay red lenta)
+  try { await Promise.race([loadRemoteData(), sleep(4000)]); } catch(e) {}
   renderHome();
+
+  // GitHub token admin listeners
+  document.getElementById('saveGhToken').addEventListener('click',()=>{
+    const t=document.getElementById('ghTokenInput').value.trim(); if(!t)return;
+    setGhToken(t);
+    document.getElementById('ghTokenStatus').textContent='✅ Token guardado — la sincronización está activa';
+    document.getElementById('ghTokenStatus').style.color='var(--success)';
+    document.getElementById('ghTokenInput').value='';
+    document.getElementById('ghTokenInput').placeholder='ghp_… (ya configurado)';
+  });
 })();
